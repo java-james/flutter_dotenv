@@ -3,14 +3,14 @@ flutter_dotenv
 
 Load configuration at runtime from a `.env` file which can be used throughout the applicaiton.
 
-### about
+## About
 
 This library is a fork of [mockturtl/dotenv] dart library with slight changes to make this work with flutter.
 It parses the `.env` file into a map contained within a singleton which allows the variables to be used throughout your application.
 
 [mockturtl/dotenv]: https://pub.dartlang.org/packages/dotenv
 
-### usage
+### Usage
 
 Create a `.env` file in the root of your project with the example content:
 
@@ -20,13 +20,20 @@ VAR_NAME=HELLOWORLD
 
 Add the `.env` file to your assets bundle in `pubspec.yaml`
 
-  ```
+```yml
   assets:
-  - .env
-  ```
+    - .env
+```
+
+Add the `.env` file as an entry in your `.gitignore` if it isn't already
+
+```sh
+.env*
+```
 
 Init the DotEnv singleton in `main.dart`
-```
+
+```dart
 Future main() async {
   await DotEnv().load('.env');
   //...runapp
@@ -34,13 +41,14 @@ Future main() async {
 ```
 
 Access variables from `.env` throughout the applicaiton
-```
+
+```dart
 DotEnv().env['VAR_NAME'];
 ```
 
 Optionally you could map `DotEnv().env` after load to a config model to access config with types.
 
-#### discussion
+#### Discussion
 
 Use the [issue tracker][tracker] for bug reports and feature requests.
 
@@ -48,7 +56,7 @@ Pull requests are welcome.
 
 [tracker]: https://github.com/java-james/flutter_dotenv/issues
 
-###### prior art
+###### Prior art
 
 [flutter_dotenv]: https://pub.dartlang.org/packages/dotenv
 - [mockturtl/dotenv][] (dart)
