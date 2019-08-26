@@ -24,6 +24,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/widgets.dart';
 
 import './parser.dart';
 
@@ -71,6 +72,7 @@ class DotEnv {
 
   Future<List<String>> _verify(String filename) async {
     try {
+      WidgetsFlutterBinding.ensureInitialized();
       var str = await rootBundle.loadString(filename);
       if (str.isNotEmpty) return str.split('\n');
       stderr.writeln('[flutter_dotenv] Load failed: file $filename was empty');
