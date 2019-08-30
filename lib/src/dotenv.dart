@@ -66,7 +66,7 @@ class DotEnv {
   /// Logs to [stderr] if [filename] does not exist.
   Future load([String filename = '.env', Parser psr = const Parser()]) async {
     var lines = await _verify(filename);
-    env.addAll(psr.parse(lines));
+    _env.addAll(psr.parse(lines));
   }
 
   Future<List<String>> _verify(String filename) async {
