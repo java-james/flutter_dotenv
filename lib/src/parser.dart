@@ -30,12 +30,12 @@ class Parser {
     var stripped = strip(line);
     if (!_isValid(stripped)) return {};
 
-    var sides = stripped.split('=');
-    var lhs = sides[0];
+    var idx = stripped.indexOf('=');
+    var lhs = stripped.substring(0, idx);
     var k = swallow(lhs);
     if (k.isEmpty) return {};
 
-    var rhs = sides[1].trim();
+    var rhs = stripped.substring(idx + 1, stripped.length).trim();
     var v = unquote(rhs);
 
     return {k: v};
