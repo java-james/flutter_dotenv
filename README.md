@@ -28,14 +28,14 @@ Add the `.env` file to your assets bundle in `pubspec.yaml`
 Add the `.env` file as an entry in your `.gitignore` if it isn't already
 
 ```sh
-.env*
+assets/.env*
 ```
 
 Init the DotEnv singleton in `main.dart`
 
 ```dart
 Future main() async {
-  await DotEnv().load('.env');
+  await DotEnv().load('assets/.env');
   //...runapp
 }
 ```
