@@ -19,11 +19,18 @@ void main() {
     });
 
     test('it strips trailing comments', () {
-      var out = _psr.strip('needs="explanation"  # It was the year when they finally immanentized the Eschaton.');
+      var out = _psr.strip(
+          'needs="explanation"  # It was the year when they finally immanentized the Eschaton.');
       expect(out, equals('needs="explanation"'));
-      out = _psr.strip('needs="explanation  # It was the year when they finally immanentized the Eschaton." ');
-      expect(out, equals('needs="explanation  # It was the year when they finally immanentized the Eschaton."'));
-      out = _psr.strip('needs=explanation  # It was the year when they finally immanentized the Eschaton."', includeQuotes: true);
+      out = _psr.strip(
+          'needs="explanation  # It was the year when they finally immanentized the Eschaton." ');
+      expect(
+          out,
+          equals(
+              'needs="explanation  # It was the year when they finally immanentized the Eschaton."'));
+      out = _psr.strip(
+          'needs=explanation  # It was the year when they finally immanentized the Eschaton."',
+          includeQuotes: true);
       expect(out, equals('needs=explanation'));
       out = _psr.strip('  # It was the best of times, it was a waste of time.');
       expect(out, isEmpty);
@@ -38,15 +45,18 @@ void main() {
     test('it handles quotes in a comment', () {
       // note terminal whitespace
       var sing = _psr.parseOne("fruit = 'banana' # comments can be 'sneaky!' ");
-      var doub = _psr.parseOne('fruit = " banana" # comments can be "sneaky!" ');
-      var none = _psr.parseOne('fruit =    banana  # comments can be "sneaky!" ');
+      var doub =
+          _psr.parseOne('fruit = " banana" # comments can be "sneaky!" ');
+      var none =
+          _psr.parseOne('fruit =    banana  # comments can be "sneaky!" ');
 
       expect(sing['fruit'], equals('banana'));
       expect(doub['fruit'], equals(' banana'));
       expect(none['fruit'], equals('banana'));
     });
     test('treats all # in unquoted as comments', () {
-      var fail = _psr.parseOne('fruit = banana # I\'m a comment with a final "quote"');
+      var fail =
+          _psr.parseOne('fruit = banana # I\'m a comment with a final "quote"');
       expect(fail['fruit'], equals('banana'));
     });
 
@@ -75,8 +85,13 @@ void main() {
     // });
 
     test('it skips empty lines', () {
-      var out = _psr.parse(
-          ['# Define environment variables.', '  # comments will be stripped', 'foo=bar  # trailing junk', ' baz =    qux', '# another comment']);
+      var out = _psr.parse([
+        '# Define environment variables.',
+        '  # comments will be stripped',
+        'foo=bar  # trailing junk',
+        ' baz =    qux',
+        '# another comment'
+      ]);
       expect(out, equals({'foo': 'bar', 'baz': 'qux'}));
     });
 

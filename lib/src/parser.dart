@@ -6,7 +6,8 @@ class Parser {
   static final _comment = RegExp(r'''#[^'"]*$''');
   static final _commentWithQuotes = RegExp(r'''#.*$''');
   static final _surroundQuotes = RegExp(r'''^(["'])(.*?[^\\])\1''');
-  static final _bashVar = RegExp(r'(?<=^|[^\\])(\$)(?:{)?([a-zA-Z_][\w]*)+(?:})?');
+  static final _bashVar =
+      RegExp(r'(?<=^|[^\\])(\$)(?:{)?([a-zA-Z_][\w]*)+(?:})?');
 
   /// [Parser] methods are pure functions.
   const Parser();
@@ -24,7 +25,8 @@ class Parser {
   }
 
   /// Parses a single line into a key-value pair.
-  Map<String, String> parseOne(String line, {Map<String, String> env = const {}}) {
+  Map<String, String> parseOne(String line,
+      {Map<String, String> env = const {}}) {
     var stripped = strip(line);
     if (!_isValid(stripped)) return {};
 
@@ -48,7 +50,8 @@ class Parser {
   }
 
   /// Substitutes $bash_vars in [val] with values from [env].
-  String interpolate(String val, Map<String, String?> env) => val.replaceAllMapped(_bashVar, (m) {
+  String interpolate(String val, Map<String, String?> env) =>
+      val.replaceAllMapped(_bashVar, (m) {
         var k = m.group(2)!;
         if (!_has(env, k)) return '';
         return env[k]!;
@@ -64,13 +67,15 @@ class Parser {
 
   /// Removes quotes (single or double) surrounding a value.
   String unquote(String val) {
-    if (!_surroundQuotes.hasMatch(val)) return strip(val, includeQuotes: true).trim();
+    if (!_surroundQuotes.hasMatch(val))
+      return strip(val, includeQuotes: true).trim();
     return _surroundQuotes.firstMatch(val)!.group(2)!;
     // val.trim().replaceFirstMapped(_surroundQuotes, (m) => m[2]); //.trim();
   }
 
   /// Strips comments (trailing or whole-line).
-  String strip(String line, {bool includeQuotes = false}) => line.replaceAll(includeQuotes ? _commentWithQuotes : _comment, '').trim();
+  String strip(String line, {bool includeQuotes = false}) =>
+      line.replaceAll(includeQuotes ? _commentWithQuotes : _comment, '').trim();
 
   /// Omits 'export' keyword.
   String swallow(String line) => line.replaceAll(_leadingExport, '').trim();
@@ -78,5 +83,6 @@ class Parser {
   bool _isValid(String s) => s.isNotEmpty && s.contains('=');
 
   /// [ null ] is a valid value in a Dart map, but the env var representation is empty string, not the string 'null'
-  bool _has(Map<String, String?> map, String key) => map.containsKey(key) && map[key] != null;
+  bool _has(Map<String, String?> map, String key) =>
+      map.containsKey(key) && map[key] != null;
 }
