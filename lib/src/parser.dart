@@ -48,10 +48,10 @@ class Parser {
   }
 
   /// Substitutes $bash_vars in [val] with values from [env].
-  String interpolate(String val, Map<String, String> env) => val.replaceAllMapped(_bashVar, (m) {
-        var k = m.group(2);
+  String interpolate(String val, Map<String, String?> env) => val.replaceAllMapped(_bashVar, (m) {
+        var k = m.group(2)!;
         if (!_has(env, k)) return '';
-        return env[k];
+        return env[k]!;
       });
 
   /// If [val] is wrapped in single or double quotes, returns the quote character.
@@ -59,13 +59,13 @@ class Parser {
 
   String surroundingQuote(String val) {
     if (!_surroundQuotes.hasMatch(val)) return '';
-    return _surroundQuotes.firstMatch(val).group(1);
+    return _surroundQuotes.firstMatch(val)!.group(1)!;
   }
 
   /// Removes quotes (single or double) surrounding a value.
   String unquote(String val) {
     if (!_surroundQuotes.hasMatch(val)) return strip(val, includeQuotes: true).trim();
-    return _surroundQuotes.firstMatch(val).group(2);
+    return _surroundQuotes.firstMatch(val)!.group(2)!;
     // val.trim().replaceFirstMapped(_surroundQuotes, (m) => m[2]); //.trim();
   }
 
@@ -78,5 +78,5 @@ class Parser {
   bool _isValid(String s) => s.isNotEmpty && s.contains('=');
 
   /// [ null ] is a valid value in a Dart map, but the env var representation is empty string, not the string 'null'
-  bool _has(Map<String, String> map, String key) => map.containsKey(key) && map[key] != null;
+  bool _has(Map<String, String?> map, String key) => map.containsKey(key) && map[key] != null;
 }

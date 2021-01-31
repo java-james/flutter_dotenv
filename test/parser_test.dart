@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/src/parser.dart';
 import 'package:test/test.dart';
 
 const ceil = 100000;
-Random rand;
 
 void main() {
+  late Random rand;
   const _psr = Parser();
   group('[Parser]', () {
     setUp(() => rand = Random());

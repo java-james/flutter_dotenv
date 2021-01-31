@@ -1,10 +1,10 @@
 name: flutter_dotenv
-version: 3.1.1
+version: 3.2.0-nullsafety.0
 description: Easily configure any flutter application with global variables using a `.env` file.
 author: java-james <james-collins@hotmail.co.nz>
 homepage: https://github.com/java-james/flutter_dotenv
 environment:
-  sdk: '>=2.10.0 <3.0.0'
+  sdk: '>=2.12.0-0 <3.0.0'
 dependencies:
   flutter:
     sdk: flutter

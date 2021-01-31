@@ -67,7 +67,7 @@ Future testLoad({String fileInput = '', Parser parser = const Parser(), Map<Stri
 /// True if all supplied variables have nonempty value; false otherwise.
 /// Differs from [containsKey](dart:core) by excluding null values.
 /// Note [load] should be called first.
-bool isEveryDefined(Iterable<String> vars) => vars.every((k) => _envMap[k] != null && _envMap[k].isNotEmpty);
+bool isEveryDefined(Iterable<String> vars) => vars.every((k) => _envMap[k] != null && _envMap[k]!.isNotEmpty);
 
 Future<List<String>> _getEntriesFromFile(String filename) async {
   try {

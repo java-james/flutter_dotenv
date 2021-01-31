@@ -5,7 +5,8 @@ import 'package:test/test.dart';
 void main() {
   group('dotenv', () {
     setUp(() {
-      dotenv.testLoad(fileInput: File('lib/test/.env').readAsStringSync()); //, mergeWith: Platform.environment
+      print(Directory.current.toString());
+      dotenv.testLoad(fileInput: File('.env').readAsStringSync()); //, mergeWith: Platform.environment
     });
     test('able to load .env', () {
       expect(dotenv.env['FOO'], 'foo');
