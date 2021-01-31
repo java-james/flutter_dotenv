@@ -3,10 +3,8 @@
 class Parser {
   static const _singleQuot = "'";
   static final _leadingExport = RegExp(r'''^ *export ?''');
-
   static final _comment = RegExp(r'''#[^'"]*$''');
   static final _commentWithQuotes = RegExp(r'''#.*$''');
-  // static final _surroundQuotes = RegExp(r'''^(['"])(.*)\1$''');
   static final _surroundQuotes = RegExp(r'''^(["'])(.*?[^\\])\1''');
   static final _bashVar = RegExp(r'(?:\\)?(\$)(?:{)?([a-zA-Z_][\w]*)+(?:})?');
 
@@ -38,10 +36,7 @@ class Parser {
     var rhs = stripped.substring(idx + 1, stripped.length).trim();
     var quotChar = surroundingQuote(rhs);
     var v = unquote(rhs);
-    print(v);
-    if (quotChar == _singleQuot) {
-      return {k: v};
-    }
+    if (quotChar == _singleQuot) return {k: v};
 
     final interpolatedValue = interpolate(v, env);
     return {k: interpolatedValue};

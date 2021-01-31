@@ -1,10 +1,10 @@
-// import 'dart:io';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart' as dot_env;
+import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 
 Future main() async {
-  await dot_env.load();
+  await dotenv.load(mergeWith: Platform.environment); //mergeWith optional
   runApp(MyApp());
 }
 
@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
-    print(dot_env.env);
+    print(dotenv.env);
     setState(() {
       _counter++;
     });
@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: Theme.of(context).textTheme.headline4,
               ),
               Text(
-                'Env map: ${dot_env.env}',
+                'Env map: ${dotenv.env}',
               ),
             ],
           ),
