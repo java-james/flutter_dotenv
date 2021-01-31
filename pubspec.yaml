@@ -4,12 +4,12 @@ description: Easily configure any flutter application with global variables usin
 author: java-james <james-collins@hotmail.co.nz>
 homepage: https://github.com/java-james/flutter_dotenv
 environment:
-  sdk: '>=2.10.0-0 <3.0.0'
+  sdk: '>=2.10.0 <3.0.0'
 dependencies:
   flutter:
     sdk: flutter
 
 dev_dependencies:
   test:
-  # flutter_test:
-  #   sdk: flutter
+  flutter_test:
+    sdk: flutter

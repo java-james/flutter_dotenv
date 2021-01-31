@@ -6,7 +6,7 @@ class Parser {
   static final _comment = RegExp(r'''#[^'"]*$''');
   static final _commentWithQuotes = RegExp(r'''#.*$''');
   static final _surroundQuotes = RegExp(r'''^(["'])(.*?[^\\])\1''');
-  static final _bashVar = RegExp(r'(?:\\)?(\$)(?:{)?([a-zA-Z_][\w]*)+(?:})?');
+  static final _bashVar = RegExp(r'(?<=^|[^\\])(\$)(?:{)?([a-zA-Z_][\w]*)+(?:})?');
 
   /// [Parser] methods are pure functions.
   const Parser();
@@ -36,9 +36,14 @@ class Parser {
     var rhs = stripped.substring(idx + 1, stripped.length).trim();
     var quotChar = surroundingQuote(rhs);
     var v = unquote(rhs);
-    if (quotChar == _singleQuot) return {k: v};
-
-    final interpolatedValue = interpolate(v, env);
+    if (quotChar == _singleQuot) {
+      v = v.replaceAll("\\'", "'");
+      return {k: v};
+    }
+    if (quotChar == '"') {
+      v = v.replaceAll('\\"', '"').replaceAll('\\n', '\n');
+    }
+    final interpolatedValue = interpolate(v, env).replaceAll("\\\$", "\$");
     return {k: interpolatedValue};
   }
 
