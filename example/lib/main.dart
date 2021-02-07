@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 
 Future main() async {
-  await dotenv.load(mergeWith: Platform.environment); //mergeWith optional
+  await dotenv.load(fileName:'assets/.env',mergeWith: Platform.environment); //mergeWith optional
   runApp(MyApp());
 }
 
