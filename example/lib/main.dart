@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 Future main() async {
   await dotenv.load(mergeWith: {
     'TEST_VAR': '5',
-  }); //mergeWith optional
+  }); //mergeWith optional, accept Platform.environment for Mobile/Desktop APp
 
   runApp(MyApp());
 }

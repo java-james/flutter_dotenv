@@ -52,7 +52,7 @@ Add the `.env` file to your assets bundle in `pubspec.yaml`
 Optionally add the `.env` file as an entry in your `.gitignore` if it isn't already
 
 ```sh
-.env*
+*.env
 ```
 
 Load the `.env` file in `main.dart`

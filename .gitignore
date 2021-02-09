@@ -8,6 +8,7 @@
 .buildlog/
 .history
 .svn/
+#*.env
 
 # IntelliJ related
 *.iml
@@ -34,4 +35,3 @@ build/
 !example/ios/**/default.pbxuser
 !example/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
-!.env*
