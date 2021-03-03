@@ -9,8 +9,11 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
-#### 3.2.0-nullsafety.0
+4.0.0-nullsafety.0
+-----
 
+- [BREAKING] Opt into null-safety
+- [deps] Upgrade dart sdk constraints to ```>=2.12.0-0 <3.0.0```
 - [new] Allow for escape of $ ' " and \n characters
 - [fix] Ensure swallow function only removes leading 'export' keyword
 - [fix] Retain spaces within single or double quotes
