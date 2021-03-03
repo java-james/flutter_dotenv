@@ -70,7 +70,6 @@ class Parser {
     if (!_surroundQuotes.hasMatch(val))
       return strip(val, includeQuotes: true).trim();
     return _surroundQuotes.firstMatch(val)!.group(2)!;
-    // val.trim().replaceFirstMapped(_surroundQuotes, (m) => m[2]); //.trim();
   }
 
   /// Strips comments (trailing or whole-line).
