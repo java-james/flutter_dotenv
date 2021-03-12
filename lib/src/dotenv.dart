@@ -15,7 +15,7 @@ import 'errors.dart';
 /// Once you call [load], the top-level [env] map is available.
 /// You may wish to prefix the import.
 ///
-///     import 'package:dotenv/dotenv.dart' show load, env;
+///     import 'package:flutter_dotenv/flutter_dotenv.dart' show load, env;
 ///
 ///     void main() {
 ///       load();
