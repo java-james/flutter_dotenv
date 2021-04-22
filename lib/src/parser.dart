@@ -6,8 +6,7 @@ class Parser {
   static final _comment = RegExp(r'''#[^'"]*$''');
   static final _commentWithQuotes = RegExp(r'''#.*$''');
   static final _surroundQuotes = RegExp(r'''^(["'])(.*?[^\\])\1''');
-  static final _bashVar =
-      RegExp(r'(?<=^|[^\\])(\$)(?:{)?([a-zA-Z_][\w]*)+(?:})?');
+  static final _bashVar = RegExp(r'''(\\)?(\$)(?:{)?([a-zA-Z_][\w]*)+(?:})?''');
 
   /// [Parser] methods are pure functions.
   const Parser();
@@ -52,9 +51,13 @@ class Parser {
   /// Substitutes $bash_vars in [val] with values from [env].
   String interpolate(String val, Map<String, String?> env) =>
       val.replaceAllMapped(_bashVar, (m) {
-        var k = m.group(2)!;
-        if (!_has(env, k)) return '';
-        return env[k]!;
+        if ((m.group(1) ?? "") == "\\") {
+          return m.input.substring(m.start, m.end);
+        } else {
+          var k = m.group(3)!;
+          if (!_has(env, k)) return '';
+          return env[k]!;
+        }
       });
 
   /// If [val] is wrapped in single or double quotes, returns the quote character.
