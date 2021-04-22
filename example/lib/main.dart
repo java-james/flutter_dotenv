@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 
 Future main() async {
-  await dotenv.load(mergeWith: {
+  await dotenv.load(fileName: "assets/.env", mergeWith: {
     'TEST_VAR': '5',
   }); // mergeWith optional, you can include Platform.environment for Mobile/Desktop app
 
