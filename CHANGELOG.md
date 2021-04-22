@@ -9,6 +9,10 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
+### 4.0.0-nullsafety.1
+
+- [fix] Remove lookbehind regex to support safari browser
+
 4.0.0-nullsafety.0
 -----
 
@@ -21,20 +25,20 @@ Release notes are available on [github][notes].
 - [new] Migrate to null safety
 - [new] Create unit test cases for parse
 
-
-#### 3.1.0
+### 3.1.0
 
 - [new] Allow merging with a custom map on load
 
-#### 3.0.2
+### 3.0.2
 
 - [chore] Format code with dart fmt
 
-#### 3.0.1
+### 3.0.1
 
 - [docs] Use secure links
 
-#### 3.0.0
+3.0.0
+-----
 
 - [new] Merge with Platform.Environment
 - [new] Throw precise errors
@@ -42,19 +46,19 @@ Release notes are available on [github][notes].
 - [new] Improved Parsing
 - [docs] Example project
 
-#### 2.1.0
+### 2.1.0
 
 - [new] Support '=' sign in value
 
-#### 2.0.3
+### 2.0.3
 
 - [fix] Warning when using with flutter_test
 
-#### 2.0.2
+### 2.0.2
 
 - [fix] Flutter 1.9.5 compatibility ensure binding was initialized  
 
-#### 2.0.1
+### 2.0.1
 
 - [docs] tweak app description
 - [fix] increase meta version range
@@ -81,16 +85,15 @@ Release notes are available on [github][notes].
 
 - [fix] allow braces with `${var}` substitution [#10][]
 
-0.1.3
------
+### 0.1.3
 
 - [new] add command-line interface [#7][], [#8][]
 - [deps] add [args][]@v0.13
 
 [args]: https://pub.dartlang.org/packages/args
 
-0.1.2
------
+### 0.1.2
+
 
 - [new] support variable substitution from `Platform.environment` [#6][]
 - [deps] drop [logging][]
@@ -103,8 +106,7 @@ Release notes are available on [github][notes].
 
 - [fix] whitespace causes quotes not to be stripped
 
-0.1.1
------
+### 0.1.1
 
 - [deprecated] `Parser` internals will become private. [#3][]
     - `#unquote`, `#strip`, `#swallow`, `#parseOne`, `#surroundingQuote`, `#interpolate`

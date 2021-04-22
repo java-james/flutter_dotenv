@@ -4,9 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
-import 'package:flutter_dotenv/src/parser.dart';
 
 import 'errors.dart';
+import 'parser.dart';
 
 /// Loads environment variables from a `.env` file.
 ///
@@ -15,7 +15,7 @@ import 'errors.dart';
 /// Once you call [load], the top-level [env] map is available.
 /// You may wish to prefix the import.
 ///
-///     import 'package:dotenv/dotenv.dart' show load, env;
+///     import 'package:flutter_dotenv/flutter_dotenv.dart' show load, env;
 ///
 ///     void main() {
 ///       load();
