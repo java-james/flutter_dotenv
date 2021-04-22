@@ -7,13 +7,13 @@ void main() {
     setUp(() {
       print(Directory.current.toString());
       dotenv.testLoad(
-          fileInput: File('.env')
+          fileInput: File('test/.env')
               .readAsStringSync()); //, mergeWith: Platform.environment
     });
     test('able to load .env', () {
       expect(dotenv.env['FOO'], 'foo');
       expect(dotenv.env['BAR'], 'bar');
-      expect(dotenv.env['FOOBAR'], '\$FOObar');
+      expect(dotenv.env['FOOBAR'], '\$FOOfoobar');
       expect(dotenv.env['ESCAPED_DOLLAR_SIGN'], '\$1000');
       expect(dotenv.env['ESCAPED_QUOTE'], "'");
       expect(dotenv.env['BASIC'], 'basic');

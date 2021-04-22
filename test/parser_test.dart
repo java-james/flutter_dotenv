@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter_dotenv/src/parser.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:test/test.dart';
 
 const ceil = 100000;
@@ -100,8 +100,8 @@ void main() {
       expect(out, equals({'foo': 'bar'}));
     });
     test('it substitutes known variables into other values', () {
-      var out = _psr.parse(['foo=bar', r'baz=super$foo']);
-      expect(out, equals({'foo': 'bar', 'baz': 'superbar'}));
+      var out = _psr.parse(['foo=bar', r'baz=super$foo${foo}']);
+      expect(out, equals({'foo': 'bar', 'baz': 'superbarbar'}));
     });
     test('it discards surrounding quotes', () {
       var out = _psr.parse([r"foo = 'bar'", r'export baz="qux"']);
