@@ -42,6 +42,8 @@ FOOBAR=$FOO$BAR
 ESCAPED_DOLLAR_SIGN='$1000'
 ```
 
+>Note: If deploying to web server, ensure that the config file is uploaded and not ignored. (Whitelist the config file on the server, or name the config file without a leading `.`)
+
 Add the `.env` file to your assets bundle in `pubspec.yaml`
 
 ```yml
