@@ -1,14 +1,12 @@
 import 'dart:io';
-import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('dotenv', () {
     setUp(() {
       print(Directory.current.toString());
-      dotenv.testLoad(
-          fileInput: File('test/.env')
-              .readAsStringSync()); //, mergeWith: Platform.environment
+      dotenv.testLoad(fileInput: File('test/.env').readAsStringSync()); //, mergeWith: Platform.environment
     });
     test('able to load .env', () {
       expect(dotenv.env['FOO'], 'foo');
