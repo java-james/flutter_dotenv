@@ -43,6 +43,8 @@ class DotEnv {
     return _envMap;
   }
 
+  bool get isInitialized => _isInitialized;
+
   /// Clear [env]
   void clean() => _envMap.clear();
 
