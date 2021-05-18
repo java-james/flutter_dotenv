@@ -1,5 +1,4 @@
-flutter_dotenv
-==============
+# flutter_dotenv
 
 [![Pub Version][pub-badge]][pub]
 
@@ -33,7 +32,7 @@ This library parses that file and merges its values with the built-in
 
 # Usage
 
-Create a `.env` file in the root of your project with the example content:
+1. Create a `.env` file in the root of your project with the example content:
 
 ```sh
 FOO=foo
@@ -42,29 +41,37 @@ FOOBAR=$FOO$BAR
 ESCAPED_DOLLAR_SIGN='$1000'
 ```
 
->Note: If deploying to web server, ensure that the config file is uploaded and not ignored. (Whitelist the config file on the server, or name the config file without a leading `.`)
+> Note: If deploying to web server, ensure that the config file is uploaded and not ignored. (Whitelist the config file on the server, or name the config file without a leading `.`)
 
-Add the `.env` file to your assets bundle in `pubspec.yaml`
+2. Add the `.env` file to your assets bundle in `pubspec.yaml`. **Ensure that the path corresponds to the location of the .env file!**
 
 ```yml
-  assets:
-    - .env
+assets:
+  - .env
 ```
 
-Optionally add the `.env` file as an entry in your `.gitignore` if it isn't already
+3. Remember to add the `.env` file as an entry in your `.gitignore` if it isn't already unless you want it included in your version control.
 
-```sh
+```txt
 *.env
 ```
 
-Load the `.env` file in `main.dart`
+4. Load the `.env` file in `main.dart`. Note that `flutter_dotenv >=5.0.0-nullsafety.0` has a slightly different syntax for consuming the DotEnv data.
+
+**v5.0.0 and later**
 
 ```dart
-import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+// DotEnv dotenv = DotEnv() is automatically called during import.
+// If you want to load multiple dotenv files or name your dotenv object differently, you can do the following and import the singleton into the relavant files:
+// DotEnv another_dotenv = DotEnv()
 
 Future main() async {
-  // NOTE: The filename will default to .env and doesn't need to be defined in this case
-  await DotEnv.load(fileName: ".env");
+  // To load the .env file contents into dotenv.
+  // NOTE: fileName defaults to .env and can be omitted in this case.
+  // Ensure that the filename corresponds to the path in step 1 and 2.
+  await dotenv.load(fileName: ".env");
   //...runapp
 }
 ```
@@ -73,7 +80,25 @@ You can then access variables from `.env` throughout the application
 
 ```dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+dotenv.env['VAR_NAME'];
 
+```
+
+**Before v5.0.0**
+
+```dart
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
+
+Future main() async {
+  await DotEnv.load(fileName: ".env");
+  //...runapp
+}
+```
+
+Access env using:
+
+```dart
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 env['VAR_NAME'];
 ```
 
@@ -81,9 +106,11 @@ Optionally you could map `env` after load to a config model to access a config w
 
 # Advanced usage
 
+Refer to the `test/dotenv_test.dart` file for a better idea of the behaviour of the `.env` parser.
+
 ## Referencing
 
-You can reference variables defined above other within  `.env`:
+You can reference variables defined above other within `.env`:
 
 ```
   FOO=foo
@@ -138,6 +165,7 @@ Pull requests are welcome.
 # Prior art
 
 [flutter_dotenv]: https://pub.dartlang.org/packages/dotenv
+
 - [mockturtl/dotenv][] (dart)
 - [bkeepers/dotenv][] (ruby)
 - [motdotla/dotenv][] (node)

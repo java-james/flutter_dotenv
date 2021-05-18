@@ -12,21 +12,22 @@ import 'parser.dart';
 ///
 /// ## usage
 ///
-/// Once you call [load], the top-level [env] map is available.
+/// Once you call (dotenv.load), the env variables can be accessed as a map
+/// using the env getter of dotenv (dotenv.env).
 /// You may wish to prefix the import.
 ///
-///     import 'package:flutter_dotenv/flutter_dotenv.dart' show load, env;
+///     import 'package:flutter_dotenv/flutter_dotenv.dart';
 ///
-///     void main() {
-///       load();
-///       var x = env['foo'];
+///     void main() async {
+///       await dotenv.load();
+///       var x = dotenv.env['foo'];
 ///       // ...
 ///     }
 ///
 /// Verify required variables are present:
 ///
 ///     const _requiredEnvVars = const ['host', 'port'];
-///     bool get hasEnv => isEveryDefined(_requiredEnvVars);
+///     bool get hasEnv => dotenv.isEveryDefined(_requiredEnvVars);
 ///
 
 DotEnv dotenv = DotEnv();
