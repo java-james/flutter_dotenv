@@ -1,5 +1,4 @@
-changelog
-=========
+# changelog
 
 This project follows [pub-flavored semantic versioning][pub-semver]. ([more][pub-semver-readme])
 
@@ -9,15 +8,24 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
-### 4.0.0-nullsafety.1
+# 5.0.0-nullsafety.0
+
+- [BREAKING] Wrap dotenv.dart methods within a class
+- [fix] Updated documentation to reflect changes and improve clarity
+
+## Upgrading from 4.0.x
+
+- Access dotenv methods from the DotEnv class instead of globally.
+- Prepend dotenv to all dotenv method calls: e,g, `load()` to `dotenv.load()`.
+
+## 4.0.0-nullsafety.1
 
 - [fix] Remove lookbehind regex to support safari browser
 
-4.0.0-nullsafety.0
------
+# 4.0.0-nullsafety.0
 
 - [BREAKING] Opt into null-safety
-- [deps] Upgrade dart sdk constraints to ```>=2.12.0-0 <3.0.0```
+- [deps] Upgrade dart sdk constraints to `>=2.12.0-0 <3.0.0`
 - [new] Allow for escape of $ ' " and \n characters
 - [fix] Ensure swallow function only removes leading 'export' keyword
 - [fix] Retain spaces within single or double quotes
@@ -25,7 +33,7 @@ Release notes are available on [github][notes].
 - [new] Migrate to null safety
 - [new] Create unit test cases for parse
 
-### 3.1.0
+## 3.1.0
 
 - [new] Allow merging with a custom map on load
 
@@ -37,8 +45,7 @@ Release notes are available on [github][notes].
 
 - [docs] Use secure links
 
-3.0.0
------
+# 3.0.0
 
 - [new] Merge with Platform.Environment
 - [new] Throw precise errors
@@ -46,7 +53,7 @@ Release notes are available on [github][notes].
 - [new] Improved Parsing
 - [docs] Example project
 
-### 2.1.0
+## 2.1.0
 
 - [new] Support '=' sign in value
 
@@ -56,20 +63,18 @@ Release notes are available on [github][notes].
 
 ### 2.0.2
 
-- [fix] Flutter 1.9.5 compatibility ensure binding was initialized  
+- [fix] Flutter 1.9.5 compatibility ensure binding was initialized
 
 ### 2.0.1
 
 - [docs] tweak app description
 - [fix] increase meta version range
 
-2.0.0
------
+# 2.0.0
 
 - Flutter compatible
 
-1.0.0
------
+# 1.0.0
 
 - Dart 2 compatible. [#16][]
 
@@ -94,7 +99,6 @@ Release notes are available on [github][notes].
 
 ### 0.1.2
 
-
 - [new] support variable substitution from `Platform.environment` [#6][]
 - [deps] drop [logging][]
 
@@ -109,7 +113,7 @@ Release notes are available on [github][notes].
 ### 0.1.1
 
 - [deprecated] `Parser` internals will become private. [#3][]
-    - `#unquote`, `#strip`, `#swallow`, `#parseOne`, `#surroundingQuote`, `#interpolate`
+  - `#unquote`, `#strip`, `#swallow`, `#parseOne`, `#surroundingQuote`, `#interpolate`
 - [new] support variable substitution
 - [deps] migrate to [test][]
 - [deps] bump [logging][]
@@ -117,7 +121,6 @@ Release notes are available on [github][notes].
 [test]: https://pub.dartlang.org/packages/test
 [logging]: https://pub.dartlang.org/packages/logging
 
-0.1.0
------
+# 0.1.0
 
 Initial release.

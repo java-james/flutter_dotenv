@@ -81,7 +81,6 @@ You can then access variables from `.env` throughout the application
 ```dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 dotenv.env['VAR_NAME'];
-
 ```
 
 **Before v5.0.0**
