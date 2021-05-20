@@ -56,7 +56,7 @@ assets:
 *.env
 ```
 
-4. Load the `.env` file in `main.dart`. Note that `flutter_dotenv >=5.0.0-nullsafety.0` has a slightly different syntax for consuming the DotEnv data.
+4. Load the `.env` file in `main.dart`. Note that `flutter_dotenv >=5.0.0` has a slightly different syntax for consuming the DotEnv data.
 
 **v5.0.0 and later**
 
