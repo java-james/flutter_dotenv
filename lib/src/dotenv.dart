@@ -49,6 +49,19 @@ class DotEnv {
   /// Clear [env]
   void clean() => _envMap.clear();
 
+  String get(String name, {String? fallback}) {
+    final value = maybeGet(name, fallback: fallback);
+    assert(() {
+      if (value == null && fallback == null) {
+        throw AssertionError('A non-null fallback is required for missing entries');
+      }
+      return true;
+    }());
+    return value!;
+  }
+
+  String? maybeGet(String name, {String? fallback}) => env[name] ?? fallback;
+
   /// Loads environment variables from the env file into a map
   /// Merge with any entries defined in [mergeWith]
   Future<void> load(
@@ -62,8 +75,8 @@ class DotEnv {
     _isInitialized = true;
   }
 
-  Future<void> testLoad(
-      {String fileInput = '', Parser parser = const Parser(), Map<String, String> mergeWith = const {}}) async {
+  void testLoad(
+      {String fileInput = '', Parser parser = const Parser(), Map<String, String> mergeWith = const {}}) {
     clean();
     final linesFromFile = fileInput.split('\n');
     final linesFromMergeWith = mergeWith.entries.map((entry) => "${entry.key}=${entry.value}").toList();
