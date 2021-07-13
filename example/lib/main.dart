@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
                     Text('Original'),
                     Divider(),
                     Text(snapshot.data ?? ''),
+                    Text(dotenv.get('MISSING', fallback: 'Default fallback value')),
                   ],
                 ),
               ),

@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('dotenv', () {
     setUp(() {
       print(Directory.current.toString());
-      dotenv.testLoad(fileInput: File('test/.env').readAsStringSync()); //, mergeWith: Platform.environment
+      dotenv.testLoad(fileInput: File('test/.env').readAsStringSync()); // mergeWith: Platform.environment
     });
     test('able to load .env', () {
       expect(dotenv.env['FOO'], 'foo');
@@ -35,6 +35,16 @@ void main() {
       expect(dotenv.env['TRIM_SPACE_FROM_UNQUOTED'], 'some spaced out string');
       expect(dotenv.env['USERNAME'], 'therealnerdybeast@example.tld');
       expect(dotenv.env['SPACED_KEY'], 'parsed');
+    });
+    test('fallback getter works', () {
+      expect(dotenv.get('COMMENTS', fallback: 'sample'), 'sample');
+      expect(() => dotenv.get('COMMENTS'), throwsAssertionError);
+      expect(dotenv.get('EQUAL_SIGNS', fallback: 'sample'), 'equals==');
+    });
+    test('nullable fallback getter works', () {
+      expect(dotenv.maybeGet('COMMENTS', fallback: 'sample'), 'sample');
+      expect(dotenv.maybeGet('COMMENTS'), null);
+      expect(dotenv.maybeGet('EQUAL_SIGNS', fallback: 'sample'), 'equals==');
     });
   });
 }

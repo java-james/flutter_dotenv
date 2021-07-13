@@ -8,6 +8,11 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
+# 5.0.1
+
+- [fix] Change `testLoad()` to be synchronous
+- [new] Add `get()` and `maybeGet()` methods for getting values with a fallback
+
 # 5.0.0
 
 - [BREAKING] Wrap dotenv.dart methods within a class

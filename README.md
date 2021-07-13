@@ -137,6 +137,41 @@ You can also reference these merged variables within `.env`:
   FOOBAR=$FOO$BAR
 ```
 
+## Using in tests
+
+There is a `testLoad` method that can be used to load a static set of variables for testing.
+
+```dart
+// Loading from a static string.
+dotenv.testLoad(fileInput: '''FOO=foo
+BAR=bar
+''');
+
+// Loading from a file synchronously.
+dotenv.testLoad(fileInput: File('test/.env').readAsStringSync());
+```
+
+## Null safety
+
+To avoid null-safety checks for variables that are known to exist, there is a `get()` method that
+will throw an exception if the variable is undefined. You can also specify a default fallback 
+value for when the variable is undefined in the .env file.
+
+```dart
+Future<void> main() async {
+  await dotenv.load();
+
+  String foo = dotenv.get('VAR_NAME');
+
+  // Or with fallback.
+  String bar = dotenv.get('MISSING_VAR_NAME', fallback; 'sane-default');
+
+  // This would return null.
+  String? baz = dotenv.get('MISSING_VAR_NAME', fallback; null);
+}
+```
+
+
 ## Usage with Platform Environment
 
 The Platform.environment map can be merged into the env:
