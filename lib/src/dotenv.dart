@@ -49,24 +49,37 @@ class DotEnv {
   /// Clear [env]
   void clean() => _envMap.clear();
 
+  String get(String name, {String? fallback}) {
+    final value = env[name] ?? fallback;
+    return value!;
+  }
+
   /// Loads environment variables from the env file into a map
   /// Merge with any entries defined in [mergeWith]
   Future<void> load(
-      {String fileName = '.env', Parser parser = const Parser(), Map<String, String> mergeWith = const {}}) async {
+      {String fileName = '.env',
+      Parser parser = const Parser(),
+      Map<String, String> mergeWith = const {}}) async {
     clean();
     final linesFromFile = await _getEntriesFromFile(fileName);
-    final linesFromMergeWith = mergeWith.entries.map((entry) => "${entry.key}=${entry.value}").toList();
+    final linesFromMergeWith = mergeWith.entries
+        .map((entry) => "${entry.key}=${entry.value}")
+        .toList();
     final allLines = linesFromMergeWith..addAll(linesFromFile);
     final envEntries = parser.parse(allLines);
     _envMap.addAll(envEntries);
     _isInitialized = true;
   }
 
-  Future<void> testLoad(
-      {String fileInput = '', Parser parser = const Parser(), Map<String, String> mergeWith = const {}}) async {
+  void testLoad(
+      {String fileInput = '',
+      Parser parser = const Parser(),
+      Map<String, String> mergeWith = const {}}) {
     clean();
     final linesFromFile = fileInput.split('\n');
-    final linesFromMergeWith = mergeWith.entries.map((entry) => "${entry.key}=${entry.value}").toList();
+    final linesFromMergeWith = mergeWith.entries
+        .map((entry) => "${entry.key}=${entry.value}")
+        .toList();
     final allLines = linesFromMergeWith..addAll(linesFromFile);
     final envEntries = parser.parse(allLines);
     _envMap.addAll(envEntries);
@@ -76,7 +89,8 @@ class DotEnv {
   /// True if all supplied variables have nonempty value; false otherwise.
   /// Differs from [containsKey](dart:core) by excluding null values.
   /// Note [load] should be called first.
-  bool isEveryDefined(Iterable<String> vars) => vars.every((k) => _envMap[k]?.isNotEmpty ?? false);
+  bool isEveryDefined(Iterable<String> vars) =>
+      vars.every((k) => _envMap[k]?.isNotEmpty ?? false);
 
   Future<List<String>> _getEntriesFromFile(String filename) async {
     try {
