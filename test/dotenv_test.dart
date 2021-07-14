@@ -38,5 +38,10 @@ void main() {
       expect(dotenv.env['USERNAME'], 'therealnerdybeast@example.tld');
       expect(dotenv.env['SPACED_KEY'], 'parsed');
     });
+    test('fallback getter works', () {
+      expect(dotenv.get('COMMENTS', fallback: 'sample'), 'sample');
+      expect(dotenv.get('COMMENTS'), null);
+      expect(dotenv.get('EQUAL_SIGNS', fallback: 'sample'), 'equals==');
+    });
   });
 }
