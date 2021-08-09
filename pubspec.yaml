@@ -1,5 +1,5 @@
 name: flutter_dotenv
-version: 5.0.0
+version: 5.1.0
 description: Easily configure any flutter application with global variables using a `.env` file.
 homepage: https://github.com/java-james/flutter_dotenv
 environment:

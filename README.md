@@ -128,7 +128,7 @@ ESCAPED_DOLLAR_SIGN='$1000'
 You can merge a map into the environment on load:
 
 ```dart
-  await DotEnv.load(mergeWith: { "FOO": "foo", "BAR": "bar"});
+  await dotenv.load(mergeWith: { "FOO": "foo", "BAR": "bar"});
 ```
 
 You can also reference these merged variables within `.env`:
@@ -137,13 +137,33 @@ You can also reference these merged variables within `.env`:
   FOOBAR=$FOO$BAR
 ```
 
+## Merge with other env files:
+
+Useful for defining a base set of values, and overriding a subset based on environment. Env files specified first take precedence.
+
+```env
+# .env
+TEST_VALUE=base-value
+```
+
+```env
+# .env-staging
+TEST_VALUE=staging-value
+```
+
+```dart
+  await dotenv.load(fileName: ".env", overrideWith: [".env-staging"]);
+
+  dotenv.get("TEST_VALUE") // => "staging-value"
+```
+
 ## Usage with Platform Environment
 
 The Platform.environment map can be merged into the env:
 
 ```dart
   // For example using Platform.environment that contains a CLIENT_ID entry
-  await DotEnv.load(mergeWith: Platform.environment);
+  await dotenv.load(mergeWith: Platform.environment);
   print(env["CLIENT_ID"]);
 ```
 

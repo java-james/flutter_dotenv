@@ -51,23 +51,50 @@ class DotEnv {
 
   /// Loads environment variables from the env file into a map
   /// Merge with any entries defined in [mergeWith]
-  Future<void> load(
-      {String fileName = '.env', Parser parser = const Parser(), Map<String, String> mergeWith = const {}}) async {
+  /// [overrideWith] is a list of other env files whose values will override values
+  ///   read from [fileName]
+  Future<void> load({
+    String fileName = '.env',
+    Parser parser = const Parser(),
+    Map<String, String> mergeWith = const {},
+    List<String> overrideWith = const [],
+  }) async {
     clean();
     final linesFromFile = await _getEntriesFromFile(fileName);
-    final linesFromMergeWith = mergeWith.entries.map((entry) => "${entry.key}=${entry.value}").toList();
-    final allLines = linesFromMergeWith..addAll(linesFromFile);
+    final linesFromOverrides = await _getLinesFromOverride(overrideWith);
+
+    final linesFromMergeWith = mergeWith.entries
+        .map((entry) => "${entry.key}=${entry.value}")
+        .toList();
+    final allLines = linesFromMergeWith
+      ..addAll(linesFromOverrides)
+      ..addAll(linesFromFile);
+
     final envEntries = parser.parse(allLines);
     _envMap.addAll(envEntries);
     _isInitialized = true;
   }
 
-  Future<void> testLoad(
-      {String fileInput = '', Parser parser = const Parser(), Map<String, String> mergeWith = const {}}) async {
+  Future<void> testLoad({
+    String fileInput = '',
+    Parser parser = const Parser(),
+    Map<String, String> mergeWith = const {},
+    List<String> overrideWith = const [],
+  }) async {
     clean();
     final linesFromFile = fileInput.split('\n');
-    final linesFromMergeWith = mergeWith.entries.map((entry) => "${entry.key}=${entry.value}").toList();
-    final allLines = linesFromMergeWith..addAll(linesFromFile);
+
+    final linesFromOverrides = overrideWith
+        .map((String lines) => lines.split("\n"))
+        .expand((x) => x)
+        .toList();
+
+    final linesFromMergeWith = mergeWith.entries
+        .map((entry) => "${entry.key}=${entry.value}")
+        .toList();
+    final allLines = linesFromMergeWith
+      ..addAll(linesFromOverrides)
+      ..addAll(linesFromFile);
     final envEntries = parser.parse(allLines);
     _envMap.addAll(envEntries);
     _isInitialized = true;
@@ -76,7 +103,8 @@ class DotEnv {
   /// True if all supplied variables have nonempty value; false otherwise.
   /// Differs from [containsKey](dart:core) by excluding null values.
   /// Note [load] should be called first.
-  bool isEveryDefined(Iterable<String> vars) => vars.every((k) => _envMap[k]?.isNotEmpty ?? false);
+  bool isEveryDefined(Iterable<String> vars) =>
+      vars.every((k) => _envMap[k]?.isNotEmpty ?? false);
 
   Future<List<String>> _getEntriesFromFile(String filename) async {
     try {
@@ -89,5 +117,17 @@ class DotEnv {
     } on FlutterError {
       throw FileNotFoundError();
     }
+  }
+
+  Future<List<String>> _getLinesFromOverride(List<String> overrideWith) async {
+    List<String> overrideLines = [];
+
+    for (int i = 0; i < overrideWith.length; i++) {
+      final overrideWithFile = overrideWith[i];
+      final lines = await _getEntriesFromFile(overrideWithFile);
+      overrideLines = overrideLines..addAll(lines);
+    }
+
+    return overrideLines;
   }
 }
