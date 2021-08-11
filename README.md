@@ -39,6 +39,7 @@ FOO=foo
 BAR=bar
 FOOBAR=$FOO$BAR
 ESCAPED_DOLLAR_SIGN='$1000'
+# This is a comment
 ```
 
 > Note: If deploying to web server, ensure that the config file is uploaded and not ignored. (Whitelist the config file on the server, or name the config file without a leading `.`)
@@ -164,10 +165,10 @@ Future<void> main() async {
   String foo = dotenv.get('VAR_NAME');
 
   // Or with fallback.
-  String bar = dotenv.get('MISSING_VAR_NAME', fallback; 'sane-default');
+  String bar = dotenv.get('MISSING_VAR_NAME', fallback: 'sane-default');
 
   // This would return null.
-  String? baz = dotenv.get('MISSING_VAR_NAME', fallback; null);
+  String? baz = dotenv.maybeGet('MISSING_VAR_NAME', fallback: null);
 }
 ```
 
