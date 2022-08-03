@@ -14,6 +14,16 @@ void main() {
       expect(dotenv.env['FOOBAR'], '\$FOOfoobar');
       expect(dotenv.env['ESCAPED_DOLLAR_SIGN'], '\$1000');
       expect(dotenv.env['ESCAPED_QUOTE'], "'");
+      expect(dotenv.env['BOOL_TRUE'], "true");
+      expect(dotenv.env['BOOL_1'], "1");
+      expect(dotenv.env['BOOL_FALSE'], "false");
+      expect(dotenv.env['BOOL_0'], "0");
+      expect(dotenv.env['INT_42'], "42");
+      expect(dotenv.env['INT_42_NEGATIVE'], "-42");
+      expect(dotenv.env['DOUBLE_13_37'], "13.37");
+      expect(dotenv.env['DOUBLE_13_37_NEGATIVE'], "-13.37");
+      expect(dotenv.env['DOUBLE_1e3'], "1.e3");
+      expect(dotenv.env['DOUBLE_POINT_3'], ".3");
       expect(dotenv.env['BASIC'], 'basic');
       expect(dotenv.env['AFTER_LINE'], 'after_line');
       expect(dotenv.env['EMPTY'], '');
@@ -45,6 +55,32 @@ void main() {
       expect(dotenv.maybeGet('COMMENTS', fallback: 'sample'), 'sample');
       expect(dotenv.maybeGet('COMMENTS'), null);
       expect(dotenv.maybeGet('EQUAL_SIGNS', fallback: 'sample'), 'equals==');
+    });
+    test('int getting works', () {
+      expect(dotenv.getInt('INT_42'), 42);
+      expect(dotenv.getInt('INT_42_NEGATIVE'), -42);
+      expect(() => dotenv.getInt('COMMENTS'), throwsAssertionError);
+      expect(dotenv.getInt('COMMENTS', fallback: 42), 42);
+      expect(() => dotenv.getInt('FOO'), throwsFormatException);
+    });
+    test('double getting works', () {
+      expect(dotenv.getDouble('DOUBLE_13_37'), 13.37);
+      expect(dotenv.getDouble('DOUBLE_13_37_NEGATIVE'), -13.37);
+      expect(dotenv.getDouble('DOUBLE_1e3'), 1e3);
+      expect(dotenv.getDouble('DOUBLE_POINT_3'), .3);
+      expect(() => dotenv.getDouble('COMMENTS'), throwsAssertionError);
+      expect(dotenv.getDouble('COMMENTS', fallback: .3), .3);
+      expect(() => dotenv.getDouble('FOO'), throwsFormatException);
+    });
+    test('bool getting works', () {
+      expect(dotenv.getBool('BOOL_TRUE'), true);
+      expect(dotenv.getBool('BOOL_1'), true);
+      expect(dotenv.getBool('BOOL_FALSE'), false);
+      expect(dotenv.getBool('BOOL_0'), false);
+      expect(() => dotenv.getBool('COMMENTS'), throwsAssertionError);
+      expect(dotenv.getBool('COMMENTS', fallback: true), true);
+      expect(dotenv.getBool('COMMENTS', fallback: false), false);
+      expect(() => dotenv.getBool('FOO'), throwsFormatException);
     });
   });
 }
