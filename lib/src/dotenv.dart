@@ -59,10 +59,14 @@ class DotEnv {
 
   /// Loads environment variables from the env file into a map
   /// Merge with any entries defined in [mergeWith]
-  Future<void> load(
-      {String fileName = '.env', Parser parser = const Parser(), Map<String, String> mergeWith = const {}}) async {
+  Future<void> load({
+    String fileName = '.env',
+    Parser parser = const Parser(),
+    Map<String, String> mergeWith = const {},
+    String? packageName,
+  }) async {
     clean();
-    final linesFromFile = await _getEntriesFromFile(fileName);
+    final linesFromFile = await _getEntriesFromFile(fileName, packageName: packageName);
     final linesFromMergeWith = mergeWith.entries.map((entry) => "${entry.key}=${entry.value}").toList();
     final allLines = linesFromMergeWith..addAll(linesFromFile);
     final envEntries = parser.parse(allLines);
@@ -70,8 +74,7 @@ class DotEnv {
     _isInitialized = true;
   }
 
-  void testLoad(
-      {String fileInput = '', Parser parser = const Parser(), Map<String, String> mergeWith = const {}}) {
+  void testLoad({String fileInput = '', Parser parser = const Parser(), Map<String, String> mergeWith = const {}}) {
     clean();
     final linesFromFile = fileInput.split('\n');
     final linesFromMergeWith = mergeWith.entries.map((entry) => "${entry.key}=${entry.value}").toList();
@@ -86,10 +89,11 @@ class DotEnv {
   /// Note [load] should be called first.
   bool isEveryDefined(Iterable<String> vars) => vars.every((k) => _envMap[k]?.isNotEmpty ?? false);
 
-  Future<List<String>> _getEntriesFromFile(String filename) async {
+  Future<List<String>> _getEntriesFromFile(String filename, {String? packageName}) async {
     try {
       WidgetsFlutterBinding.ensureInitialized();
-      var envString = await rootBundle.loadString(filename);
+      final keyToLoad = packageName == null ? filename : 'packages/$packageName/$filename';
+      var envString = await rootBundle.loadString(keyToLoad);
       if (envString.isEmpty) {
         throw EmptyEnvFileError();
       }
