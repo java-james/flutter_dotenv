@@ -61,9 +61,19 @@ class DotEnv {
   /// Loads environment variables from the env file into a map
   /// Merge with any entries defined in [mergeWith]
   Future<void> load(
-      {String fileName = '.env',Parser parser = const Parser(),Map<String, String> mergeWith = const {}}) async {
+      {String fileName = '.env',Parser parser = const Parser(),Map<String, String> mergeWith = const {}, bool optional = false}) async {
     clean();
-    final linesFromFile = await _getEntriesFromFile(fileName);
+    List<String> linesFromFile;
+    try {
+      linesFromFile = await _getEntriesFromFile(fileName);
+    } on FileNotFoundError {
+      if (optional) {
+        linesFromFile = [];
+      } else {
+        rethrow;
+      }
+    }
+
     final linesFromMergeWith = mergeWith.entries.map((entry) => "${entry.key}=${entry.value}").toList();
     final allLines = linesFromMergeWith..addAll(linesFromFile);
     final envEntries = parser.parse(allLines);
