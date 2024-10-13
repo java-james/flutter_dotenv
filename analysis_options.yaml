@@ -54,8 +54,6 @@ linter:
   # ~ functions
   - prefer_function_declarations_over_variables
   - unnecessary_lambdas
-  # ~ parameters
-  - prefer_equal_for_default_values
   # ~ variables
   - avoid_init_to_null
   # ~ members
@@ -86,7 +84,6 @@ linter:
   # ~ members
   - use_setters_to_change_properties
   - avoid_setters_without_getters
-  - avoid_returning_null # ~ avoid
   - avoid_returning_this # ~ avoid
   # ~ types
   - type_annotate_public_apis # ~ prefer

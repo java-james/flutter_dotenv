@@ -8,7 +8,7 @@ void main() {
       print(Directory.current.toString());
       dotenv.testLoad(fileInput: File('test/.env').readAsStringSync()); // mergeWith: Platform.environment
     });
-    test('able to load .env', () {
+    test('when .env is loaded we should be able to get the .env variables', () {
       expect(dotenv.env['FOO'], 'foo');
       expect(dotenv.env['BAR'], 'bar');
       expect(dotenv.env['FOOBAR'], '\$FOOfoobar');
@@ -36,14 +36,17 @@ void main() {
       expect(dotenv.env['USERNAME'], 'therealnerdybeast@example.tld');
       expect(dotenv.env['SPACED_KEY'], 'parsed');
     });
-    test('fallback getter works', () {
+    test('when getting a vairable that is not in .env, we should get the fallback we defined', () {
+      expect(dotenv.get('FOO', fallback: 'bar'), 'foo');
       expect(dotenv.get('COMMENTS', fallback: 'sample'), 'sample');
-      expect(() => dotenv.get('COMMENTS'), throwsAssertionError);
       expect(dotenv.get('EQUAL_SIGNS', fallback: 'sample'), 'equals==');
     });
-    test('nullable fallback getter works', () {
-      expect(dotenv.maybeGet('COMMENTS', fallback: 'sample'), 'sample');
+    test('when getting a vairable that is not in .env, we should get an error thrown', () {
+      expect(() => dotenv.get('COMMENTS'), throwsAssertionError);
+    });
+    test('when getting a vairable using the nullable getter, we should get null if no fallback is defined', () {
       expect(dotenv.maybeGet('COMMENTS'), null);
+      expect(dotenv.maybeGet('COMMENTS', fallback: 'sample'), 'sample');
       expect(dotenv.maybeGet('EQUAL_SIGNS', fallback: 'sample'), 'equals==');
     });
   });
