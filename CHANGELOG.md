@@ -8,6 +8,12 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
+# 5.2.0
+
+- [new] Get variables as `int`, `double` and `bool`
+- [deps] Upgrade dart sdk constraints to `>=2.12.0-0 <4.0.0`
+- [new] Export error classes
+
 # 5.1.0
 
 - [new] Add `isOptional` init param to prevent throwing if env file is not found
