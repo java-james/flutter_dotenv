@@ -8,6 +8,10 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
+# 5.2.1
+
+- [chore] Update readme with security info and new usage examples
+
 # 5.2.0
 
 - [new] Get variables as `int`, `double` and `bool`
