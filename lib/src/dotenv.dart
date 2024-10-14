@@ -102,7 +102,7 @@ class DotEnv {
       } else if (['false', '0'].contains(value.toLowerCase())) {
         return false;
       } else {
-        throw FormatException('Could not parse as a bool');
+        throw const FormatException('Could not parse as a bool');
       }
     }
 
