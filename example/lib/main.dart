@@ -19,31 +19,32 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'flutter_dotenv Demo',
       home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Dotenv Demo'),
-          ),
-          body: SingleChildScrollView(
-            child: FutureBuilder<String>(
-              future: rootBundle.loadString('assets/.env'),
-              initialData: '',
-              builder: (context, snapshot) => Container(
-                padding: const EdgeInsets.all(50),
-                child: Column(
-                  children: [
-                    Text(
-                      'Env map: ${dotenv.env.toString()}',
-                    ),
-                    const Divider(thickness: 5),
-                    const Text('Original'),
-                    const Divider(),
-                    Text(snapshot.data ?? ''),
-                    Text(dotenv.get('MISSING', fallback: 'Default fallback value')),
-                  ],
-                ),
+        appBar: AppBar(
+          title: const Text('Dotenv Demo'),
+        ),
+        body: SingleChildScrollView(
+          child: FutureBuilder<String>(
+            future: rootBundle.loadString('assets/.env'),
+            initialData: '',
+            builder: (context, snapshot) => Container(
+              padding: const EdgeInsets.all(50),
+              child: Column(
+                children: [
+                  Text(
+                    'Env map: ${dotenv.env.toString()}',
+                  ),
+                  const Divider(thickness: 5),
+                  const Text('Original'),
+                  const Divider(),
+                  Text(snapshot.data ?? ''),
+                  Text(dotenv.get('MISSING',
+                      fallback: 'Default fallback value')),
+                ],
               ),
             ),
           ),
         ),
+      ),
     );
   }
 }
