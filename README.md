@@ -108,6 +108,20 @@ Optionally you could map `env` after load to a config model to access a config w
 
 Refer to the `test/dotenv_test.dart` file for a better idea of the behaviour of the `.env` parser.
 
+
+## Get with typing
+
+It's a common pattern to get an env variable then parse it as a type. You can get variables that are already typed by using the following functions:
+
+```dart
+  // someBool is a bool
+  final someBool = dotenv.getBool('VAR_NAME', fallback: true);
+  // someDouble is a double
+  final someDouble = dotenv.getDouble('VAR_NAME', fallback: .3);
+  // someInt is an int
+  final someInt = dotenv.getInt('VAR_NAME', fallback: 42);
+```
+
 ## Referencing
 
 You can reference variables defined above other within `.env`:
@@ -171,7 +185,6 @@ Future<void> main() async {
   String? baz = dotenv.maybeGet('MISSING_VAR_NAME', fallback: null);
 }
 ```
-
 
 ## Usage with Platform Environment
 
