@@ -30,6 +30,12 @@ This library parses that file and merges its values with the built-in
 
 [docs-io]: https://api.dartlang.org/apidocs/channels/stable/dartdoc-viewer/dart:io.Platform#id_environment
 
+# Security Considerations
+
+Sensitive keys like API keys and tokens should not be stored in your Flutter app. They can be extracted even if obfuscated. This libary currently does not obfuscate variables as it may lull the consumers into a false sense of security. Use environment variables on the frontend application for non-sensitive configuration values, such as API endpoints and feature flags.
+
+For more details on mobile app security best practices, refer to the [OWASP Mobile Security Project.](https://owasp.org/www-project-mobile-top-10/)
+
 # Usage
 
 1. Create a `.env` file in the root of your project with the example content:
@@ -201,6 +207,12 @@ Like other merged entries described above, `.env` entries can reference these me
 ```
   CLIENT_URL=https://$CLIENT_ID.dev.domain.com
 ```
+
+# Security Considerations
+
+### Never store sensitive keys in the frontend:
+
+Sensitive keys like API keys and tokens should not be stored in your Flutter app. They can be extracted even if obfuscated. This libary currently chooses not to ocfuscate the variables as it may lull the consumers into a false sense of security. Use environment variables for non-sensitive configuration values, such as API endpoints and feature flags. 
 
 # Discussion
 
