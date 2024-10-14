@@ -156,7 +156,7 @@ You can also reference these merged variables within `.env`:
 
 ```
   FOOBAR=$FOO$BAR
-```grbi
+```
 
 ## Using in tests
 
