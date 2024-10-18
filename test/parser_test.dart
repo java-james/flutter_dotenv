@@ -11,10 +11,10 @@ void main() {
   group('[Parser]', () {
     setUp(() => rand = Random());
     test('it swallows leading "export"', () {
-      var out = psr.swallow(' export foo = bar  ');
+      var out = psr.trimExportKeyword(' export foo = bar  ');
       expect(out, equals('foo = bar'));
 
-      out = psr.swallow(' foo = bar export');
+      out = psr.trimExportKeyword(' foo = bar export');
       expect(out, equals('foo = bar export'));
     });
 
@@ -61,19 +61,19 @@ void main() {
     });
 
     test('it handles unquoted values', () {
-      var out = psr.unquote('   str   ');
+      var out = psr.removeSurroundingQuotes('   str   ');
       expect(out, equals('str'));
     });
     test('it handles double quoted values', () {
-      var out = psr.unquote('"val "');
+      var out = psr.removeSurroundingQuotes('"val "');
       expect(out, equals('val '));
     });
     test('it handles single quoted values', () {
-      var out = psr.unquote("'  val'");
+      var out = psr.removeSurroundingQuotes("'  val'");
       expect(out, equals('  val'));
     });
     test('retain trailing single quote', () {
-      var out = psr.unquote("retained'");
+      var out = psr.removeSurroundingQuotes("retained'");
       expect(out, equals("retained'"));
     });
 
@@ -109,15 +109,15 @@ void main() {
     });
 
     test('it detects unquoted values', () {
-      var out = psr.surroundingQuote('no quotes here!');
+      var out = psr.getSurroundingQuoteCharacter('no quotes here!');
       expect(out, isEmpty);
     });
     test('it detects double-quoted values', () {
-      var out = psr.surroundingQuote('"double quoted"');
+      var out = psr.getSurroundingQuoteCharacter('"double quoted"');
       expect(out, equals('"'));
     });
     test('it detects single-quoted values', () {
-      var out = psr.surroundingQuote("'single quoted'");
+      var out = psr.getSurroundingQuoteCharacter("'single quoted'");
       expect(out, equals("'"));
     });
 
@@ -153,17 +153,17 @@ void main() {
 
     test('it skips var substitution in single quotes', () {
       var r = rand.nextInt(ceil); // avoid runtime collision with real env vars
-      var out = psr.parseOne("some_var='my\$key_$r'", env: {'key_$r': 'val'});
+      var out = psr.parseOne("some_var='my\$key_$r'", envMap: {'key_$r': 'val'});
       expect(out['some_var'], equals('my\$key_$r'));
     });
     test('it performs var subs in double quotes', () {
       var r = rand.nextInt(ceil); // avoid runtime collision with real env vars
-      var out = psr.parseOne('some_var="my\$key_$r"', env: {'key_$r': 'val'});
+      var out = psr.parseOne('some_var="my\$key_$r"', envMap: {'key_$r': 'val'});
       expect(out['some_var'], equals('myval'));
     });
     test('it performs var subs without quotes', () {
       var r = rand.nextInt(ceil); // avoid runtime collision with real env vars
-      var out = psr.parseOne("some_var=my\$key_$r", env: {'key_$r': 'val'});
+      var out = psr.parseOne("some_var=my\$key_$r", envMap: {'key_$r': 'val'});
       expect(out['some_var'], equals('myval'));
     });
   });
