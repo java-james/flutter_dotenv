@@ -53,8 +53,9 @@ ESCAPED_DOLLAR_SIGN='$1000'
 2. Add the `.env` file to your assets bundle in `pubspec.yaml`. **Ensure that the path corresponds to the location of the .env file!**
 
 ```yml
-assets:
-  - .env
+flutter:
+  assets:
+    - .env
 ```
 
 3. Remember to add the `.env` file as an entry in your `.gitignore` if it isn't already unless you want it included in your version control.
