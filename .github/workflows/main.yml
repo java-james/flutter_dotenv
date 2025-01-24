@@ -9,4 +9,4 @@ jobs:
           fetch-depth: 0
       - run: |
           git remote add forgejo https://dev.stephenbrough.com/StephenBrough/flutter_dotenv.git
-          git push --mirror https://username:${{ secrets.FORGEJO_TOKEN }}@dev.stephenbrough.com/StephenBrough/flutter_dotenv.git
+          git push --mirror https://username:${{ secrets.FORGEJO_MIRROR }}@dev.stephenbrough.com/StephenBrough/flutter_dotenv.git
