@@ -7,37 +7,44 @@ Future main() async {
     'TEST_VAR': '5',
   }); // mergeWith optional, you can include Platform.environment for Mobile/Desktop app
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        title: 'Dotenv Demo',
-        home: Scaffold(
-          appBar: AppBar(
-            title: Text('Dotenv Demo'),
-          ),
-          body: SingleChildScrollView(
-            child: FutureBuilder<String>(
-              future: rootBundle.loadString('assets/.env'),
-              initialData: '',
-              builder: (context, snapshot) => Container(
-                padding: EdgeInsets.all(50),
-                child: Column(
-                  children: [
-                    Text(
-                      'Env map: ${dotenv.env.toString()}',
-                    ),
-                    Divider(thickness: 5),
-                    Text('Original'),
-                    Divider(),
-                    Text(snapshot.data ?? ''),
-                  ],
-                ),
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'flutter_dotenv Demo',
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Dotenv Demo'),
+        ),
+        body: SingleChildScrollView(
+          child: FutureBuilder<String>(
+            future: rootBundle.loadString('assets/.env'),
+            initialData: '',
+            builder: (context, snapshot) => Container(
+              padding: const EdgeInsets.all(50),
+              child: Column(
+                children: [
+                  Text(
+                    'Env map: ${dotenv.env.toString()}',
+                  ),
+                  const Divider(thickness: 5),
+                  const Text('Original'),
+                  const Divider(),
+                  Text(snapshot.data ?? ''),
+                  Text(dotenv.get('MISSING',
+                      fallback: 'Default fallback value')),
+                ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 }

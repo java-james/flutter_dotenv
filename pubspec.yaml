@@ -1,14 +1,20 @@
 name: flutter_dotenv
-version: 5.1.0
+version: 5.2.1
 description: Easily configure any flutter application with global variables using a `.env` file.
 homepage: https://github.com/java-james/flutter_dotenv
 environment:
-  sdk: ">=2.12.0-0 <3.0.0"
+  sdk: ">=2.12.0-0 <4.0.0"
 dependencies:
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  test:
   flutter_test:
     sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^4.0.0
