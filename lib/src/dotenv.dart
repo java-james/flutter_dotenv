@@ -111,14 +111,10 @@ class DotEnv {
 
   String? maybeGet(String name, {String? fallback}) => env[name] ?? fallback;
 
-  /// Loads environment variables from the env file into a map
-  /// Merge with any entries defined in [mergeWith]
-  Future<void> load(
-      {String fileName = '.env',
-      Parser parser = const Parser(),
-      Map<String, String> mergeWith = const {},
-      bool isOptional = false}) async {
-    clean();
+  Future<List<String>> _loadLinesFromFile({
+    required String fileName,
+    bool isOptional = false,
+  }) async {
     List<String> linesFromFile;
     try {
       linesFromFile = await _getEntriesFromFile(fileName);
@@ -129,12 +125,36 @@ class DotEnv {
         rethrow;
       }
     }
+    return linesFromFile;
+  }
 
+  /// Loads environment variables from the env file into a map
+  /// Merge with any entries defined in [mergeWith]
+  Future<void> load({
+    String fileName = '.env',
+    String? baseEnvFileName,
+    Parser parser = const Parser(),
+    Map<String, String> mergeWith = const {},
+    bool isOptional = false,
+  }) async {
+    clean();
+    List<String> linesFromFile =
+        await _loadLinesFromFile(fileName: fileName, isOptional: isOptional);
+
+    List<String> linesFromBaseEnvFile = [];
+    if (baseEnvFileName != null) {
+      linesFromBaseEnvFile = await _loadLinesFromFile(
+          fileName: baseEnvFileName, isOptional: isOptional);
+    }
+
+    final baseEnvEntries = parser.parse(linesFromBaseEnvFile);
     final linesFromMergeWith = mergeWith.entries
         .map((entry) => "${entry.key}=${entry.value}")
         .toList();
     final allLines = linesFromMergeWith..addAll(linesFromFile);
     final envEntries = parser.parse(allLines);
+
+    _envMap.addAll(baseEnvEntries);
     _envMap.addAll(envEntries);
     _isInitialized = true;
   }
