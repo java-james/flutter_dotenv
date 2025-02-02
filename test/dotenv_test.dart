@@ -47,21 +47,31 @@ void main() {
       expect(dotenv.env['TRIM_SPACE_FROM_UNQUOTED'], 'some spaced out string');
       expect(dotenv.env['USERNAME'], 'therealnerdybeast@example.tld');
       expect(dotenv.env['SPACED_KEY'], 'parsed');
+      expect(dotenv.env['MULTI_PEM_DOUBLE_QUOTED'], '''-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnNl1tL3QjKp3DZWM0T3u
+LgGJQwu9WqyzHKZ6WIA5T+7zPjO1L8l3S8k8YzBrfH4mqWOD1GBI8Yjq2L1ac3Y/
+bTdfHN8CmQr2iDJC0C6zY8YV93oZB3x0zC/LPbRYpF8f6OqX1lZj5vo2zJZy4fI/
+kKcI5jHYc8VJq+KCuRZrvn+3V+KuL9tF9v8ZgjF2PZbU+LsCy5Yqg1M8f5Jp5f6V
+u4QuUoobAgMBAAE=
+-----END PUBLIC KEY-----''');
+      expect(dotenv.env['MULTI_DOUBLE_QUOTED'],'THIS\nIS\nA\nMULTILINE\nSTRING');
+      expect(dotenv.env['MULTI_SINGLE_QUOTED'],'THIS\nIS\nA\nMULTILINE\nSTRING');
+
     });
     test(
-        'when getting a vairable that is not in .env, we should get the fallback we defined',
+        'when getting a variable that is not in .env, we should get the fallback we defined',
         () {
       expect(dotenv.get('FOO', fallback: 'bar'), 'foo');
       expect(dotenv.get('COMMENTS', fallback: 'sample'), 'sample');
       expect(dotenv.get('EQUAL_SIGNS', fallback: 'sample'), 'equals==');
     });
     test(
-        'when getting a vairable that is not in .env, we should get an error thrown',
+        'when getting a variable that is not in .env, we should get an error thrown',
         () {
       expect(() => dotenv.get('COMMENTS'), throwsAssertionError);
     });
     test(
-        'when getting a vairable using the nullable getter, we should get null if no fallback is defined',
+        'when getting a variable using the nullable getter, we should get null if no fallback is defined',
         () {
       expect(dotenv.maybeGet('COMMENTS'), null);
       expect(dotenv.maybeGet('COMMENTS', fallback: 'sample'), 'sample');
