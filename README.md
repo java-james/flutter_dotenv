@@ -30,6 +30,12 @@ This library parses that file and merges its values with the built-in
 
 [docs-io]: https://api.dartlang.org/apidocs/channels/stable/dartdoc-viewer/dart:io.Platform#id_environment
 
+# Security Considerations
+
+Sensitive keys like API keys and tokens should not be stored in your Flutter app. They can be extracted even if obfuscated. This libary currently does not obfuscate variables as it may lull the consumers into a false sense of security. Use environment variables on the frontend application for non-sensitive configuration values, such as API endpoints and feature flags.
+
+For more details on mobile app security best practices, refer to the [OWASP Mobile Security Project.](https://owasp.org/www-project-mobile-top-10/)
+
 # Usage
 
 1. Create a `.env` file in the root of your project with the example content:
@@ -39,6 +45,7 @@ FOO=foo
 BAR=bar
 FOOBAR=$FOO$BAR
 ESCAPED_DOLLAR_SIGN='$1000'
+# This is a comment
 ```
 
 > Note: If deploying to web server, ensure that the config file is uploaded and not ignored. (Whitelist the config file on the server, or name the config file without a leading `.`)
@@ -46,8 +53,9 @@ ESCAPED_DOLLAR_SIGN='$1000'
 2. Add the `.env` file to your assets bundle in `pubspec.yaml`. **Ensure that the path corresponds to the location of the .env file!**
 
 ```yml
-assets:
-  - .env
+flutter:
+  assets:
+    - .env
 ```
 
 3. Remember to add the `.env` file as an entry in your `.gitignore` if it isn't already unless you want it included in your version control.
@@ -107,6 +115,20 @@ Optionally you could map `env` after load to a config model to access a config w
 
 Refer to the `test/dotenv_test.dart` file for a better idea of the behaviour of the `.env` parser.
 
+
+## Get with typing
+
+It's a common pattern to get an env variable then parse it as a type. You can get variables that are already typed by using the following functions:
+
+```dart
+  // someBool is a bool
+  final someBool = dotenv.getBool('VAR_NAME', fallback: true);
+  // someDouble is a double
+  final someDouble = dotenv.getDouble('VAR_NAME', fallback: .3);
+  // someInt is an int
+  final someInt = dotenv.getInt('VAR_NAME', fallback: 42);
+```
+
 ## Referencing
 
 You can reference variables defined above other within `.env`:
@@ -157,6 +179,40 @@ TEST_VALUE=staging-value
   dotenv.get("TEST_VALUE") // => "staging-value"
 ```
 
+## Using in tests
+
+There is a `testLoad` method that can be used to load a static set of variables for testing.
+
+```dart
+// Loading from a static string.
+dotenv.testLoad(fileInput: '''FOO=foo
+BAR=bar
+''');
+
+// Loading from a file synchronously.
+dotenv.testLoad(fileInput: File('test/.env').readAsStringSync());
+```
+
+## Null safety
+
+To avoid null-safety checks for variables that are known to exist, there is a `get()` method that
+will throw an exception if the variable is undefined. You can also specify a default fallback 
+value for when the variable is undefined in the .env file.
+
+```dart
+Future<void> main() async {
+  await dotenv.load();
+
+  String foo = dotenv.get('VAR_NAME');
+
+  // Or with fallback.
+  String bar = dotenv.get('MISSING_VAR_NAME', fallback: 'sane-default');
+
+  // This would return null.
+  String? baz = dotenv.maybeGet('MISSING_VAR_NAME', fallback: null);
+}
+```
+
 ## Usage with Platform Environment
 
 The Platform.environment map can be merged into the env:
@@ -172,6 +228,12 @@ Like other merged entries described above, `.env` entries can reference these me
 ```
   CLIENT_URL=https://$CLIENT_ID.dev.domain.com
 ```
+
+# Security Considerations
+
+### Never store sensitive keys in the frontend:
+
+Sensitive keys like API keys and tokens should not be stored in your Flutter app. They can be extracted even if obfuscated. This libary currently chooses not to ocfuscate the variables as it may lull the consumers into a false sense of security. Use environment variables for non-sensitive configuration values, such as API endpoints and feature flags. 
 
 # Discussion
 
