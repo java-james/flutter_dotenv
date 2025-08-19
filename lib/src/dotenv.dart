@@ -128,6 +128,12 @@ class DotEnv {
       } else {
         rethrow;
       }
+    } on EmptyEnvFileError {
+      if (isOptional) {
+        linesFromFile = [];
+      } else {
+        rethrow;
+      }
     }
 
     final linesFromMergeWith = mergeWith.entries
