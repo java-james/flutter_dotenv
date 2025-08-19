@@ -1,0 +1,40 @@
+name: Flutter Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: 'stable'
+        cache: true
+        cache-key: flutter-${{ hashFiles('**/pubspec.lock') }}
+        cache-path: ${{ runner.tool_cache }}/flutter
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Run tests with coverage
+      run: flutter test --coverage
+      
+    - name: Upload coverage artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage/lcov.info
+        if-no-files-found: error
