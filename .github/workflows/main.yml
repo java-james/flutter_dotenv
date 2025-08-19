@@ -1,0 +1,12 @@
+name: Mirror to Forgejo
+on: [push, delete]
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: |
+          git remote add forgejo https://dev.stephenbrough.com/StephenBrough/flutter_dotenv.git
+          git push --mirror https://username:${{ secrets.FORGEJO_MIRROR }}@dev.stephenbrough.com/StephenBrough/flutter_dotenv.git
