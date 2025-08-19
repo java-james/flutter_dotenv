@@ -21,7 +21,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: 'stable'
+        flutter-version: stable
         cache: true
         cache-key: flutter-${{ hashFiles('**/pubspec.lock') }}
         cache-path: ${{ runner.tool_cache }}/flutter
