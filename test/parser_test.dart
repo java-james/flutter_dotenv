@@ -19,20 +19,20 @@ void main() {
     });
 
     test('it strips trailing comments', () {
-      var out = psr.strip(
+      var out = psr.removeCommentsFromLine(
           'needs="explanation"  # It was the year when they finally immanentized the Eschaton.');
       expect(out, equals('needs="explanation"'));
-      out = psr.strip(
+      out = psr.removeCommentsFromLine(
           'needs="explanation  # It was the year when they finally immanentized the Eschaton." ');
       expect(
           out,
           equals(
               'needs="explanation  # It was the year when they finally immanentized the Eschaton."'));
-      out = psr.strip(
+      out = psr.removeCommentsFromLine(
           'needs=explanation  # It was the year when they finally immanentized the Eschaton."',
           includeQuotes: true);
       expect(out, equals('needs=explanation'));
-      out = psr.strip('  # It was the best of times, it was a waste of time.');
+      out = psr.removeCommentsFromLine('  # It was the best of times, it was a waste of time.');
       expect(out, isEmpty);
     });
     test('it knows quoted # is not a comment', () {
