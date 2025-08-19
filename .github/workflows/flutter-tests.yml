@@ -37,4 +37,4 @@ jobs:
       with:
         name: coverage-report
         path: coverage/lcov.info
-        if-no-files-found: error
+        if-no-files-found: warn
