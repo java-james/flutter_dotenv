@@ -8,15 +8,7 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
-# 6.0.0-rc.3
-
-- [chore] version bump only
-
-# 6.0.0-rc.2
-
-- [docs] Correct readme documentation on `loadFromString`
-
-# 6.0.0-rc.1
+# 6.0.0
 
 - [feat] Allow passing in override .env files on init
 - [feat] Load .env from a passed in string
@@ -29,6 +21,9 @@ Release notes are available on [github][notes].
 - **Behavior change**: Empty file handling with `isOptional = true`  
   Previously, if the env file was empty and `isOptional` was `true`, the method would throw.  
   Now, in this case, it **no longer throws** and simply returns an empty env.
+
+- **Supported SDK range change**: Dropped support for the pre release `2.12.0-0`. Now supports `2.12.0` onwards.
+
 
 # 5.2.1
 
