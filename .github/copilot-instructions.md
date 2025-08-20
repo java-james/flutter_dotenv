@@ -4,6 +4,26 @@ flutter_dotenv is a Flutter/Dart package that loads configuration at runtime fro
 
 Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
 
+## Quick Reference
+
+**Essential Commands (run in repository root):**
+```bash
+flutter pub get                    # Install dependencies (30-90s, timeout: 120s+)
+flutter analyze                    # Static analysis (10-30s, timeout: 60s+) 
+flutter test --coverage            # Run all tests (30-60s, timeout: 120s+)
+dart format lib/ test/ example/lib/ # Format code (5-15s, timeout: 30s+)
+```
+
+**Example App Commands (run in example/ directory):**
+```bash
+cd example/
+flutter pub get                    # Install example deps (30-90s, timeout: 120s+)
+flutter run                        # Launch app (60-180s, timeout: 300s+)
+flutter run -d chrome              # Launch in web browser
+```
+
+**Critical Reminder**: NEVER CANCEL any of these operations. Always set timeouts 2-3x the expected time.
+
 ## Working Effectively
 
 ### Prerequisites and Environment Setup
@@ -230,3 +250,42 @@ dotenv.loadFromString(envString: File('test/.env').readAsStringSync());
 - **Always test override scenarios** (mergeWith and overrideWith parameters)
 - **Always test type conversions** (getInt, getBool, getDouble)
 - **Always test fallback values** for missing variables
+
+## Emergency Recovery
+
+**If Flutter/Dart installation is corrupted:**
+```bash
+# Reinstall Flutter (Linux)
+sudo snap install flutter --classic
+# OR manual install
+git clone https://github.com/flutter/flutter.git -b stable
+export PATH="$PATH:/path/to/flutter/bin"
+flutter doctor
+```
+
+**If dependencies are corrupted:**
+```bash
+flutter clean
+flutter pub get
+cd example/ && flutter clean && flutter pub get
+```
+
+**If tests are failing unexpectedly:**
+```bash
+# Check that test files exist
+ls -la test/.env test/.env-override
+# Verify test file content matches expected format
+head test/.env
+# Run individual test files
+flutter test test/dotenv_test.dart --verbose
+```
+
+**If example app won't run:**
+```bash
+# Check assets are properly declared
+grep -A5 "assets:" example/pubspec.yaml
+# Verify .env files exist
+ls -la example/assets/
+# Clean and rebuild
+cd example/ && flutter clean && flutter pub get && flutter run
+```
