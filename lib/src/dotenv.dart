@@ -113,22 +113,26 @@ class DotEnv {
 
   /// Loads environment variables from the env file into a map
   /// Merge with any entries defined in [mergeWith]
-
-  /// [overrideWith] is a list of other env files whose values will override values
-  ///   read from [fileName]
-
-  Future<void> load(
-      {String fileName = '.env',
-      Parser parser = const Parser(),
-      Map<String, String> mergeWith = const {},
-      List<String> overrideWith = const [],
-      bool isOptional = false}) async {
+  /// [overrideWithFiles] is a list of other env files whose values will override values read from [fileName]
+  Future<void> load({
+    // The name of the env file asset to load
+    // This file should be defined in your pubspec.yaml assets
+    String fileName = '.env',
+    // A optional list of other env files whose values will override values read from [fileName]
+    List<String> overrideWithFiles = const [],
+    // A map of key-value pairs to merge with the loaded env variables
+    Map<String, String> mergeWith = const {},
+    // Whether to ignore not found and empty file errors when loading the env file(s)
+    bool isOptional = false,
+    // An optional custom parser to use for parsing the env file
+    Parser parser = const Parser(),
+  }) async {
     clean();
     List<String> linesFromFile;
     List<String> linesFromOverrides;
     try {
       linesFromFile = await _getEntriesFromFile(fileName);
-      linesFromOverrides = await _getLinesFromOverride(overrideWith);
+      linesFromOverrides = await _getLinesFromOverride(overrideWithFiles);
     } on FileNotFoundError {
       if (!isOptional) rethrow;
       linesFromFile = [];
@@ -151,11 +155,16 @@ class DotEnv {
   }
 
   void loadFromString({
+    // The env string to load
     String envString = '',
+    // A optional list of other env strings whose values will override values read from [envString]
     List<String> overrideWith = const [],
-    Parser parser = const Parser(),
+    // A map of key-value pairs to merge with the loaded env variables
     Map<String, String> mergeWith = const {},
+    // Whether to ignore not found and empty file errors when loading the env string
     bool isOptional = false,
+    // An optional custom parser to use for parsing the env string
+    Parser parser = const Parser(),
   }) {
     clean();
     if (envString.isEmpty && !isOptional) {

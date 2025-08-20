@@ -10,7 +10,7 @@ Future main() async {
       'TEST_VAR': '5',
     },
     // overrideWith optional, you can include additional .env files
-    overrideWith: ["assets/.env.override"],
+    overrideWithFiles: ["assets/.env.override"],
   );
 
   runApp(const MyApp());
