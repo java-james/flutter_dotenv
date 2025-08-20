@@ -18,7 +18,8 @@ class Parser {
     for (var line in lines) {
       final parsedKeyValue = parseOne(line, envMap: envMap);
       if (parsedKeyValue.isEmpty) continue;
-      envMap.putIfAbsent(parsedKeyValue.keys.single, () => parsedKeyValue.values.single);
+      envMap.putIfAbsent(
+          parsedKeyValue.keys.single, () => parsedKeyValue.values.single);
     }
     return envMap;
   }
@@ -30,10 +31,13 @@ class Parser {
     if (!_isStringWithEqualsChar(lineWithoutComments)) return {};
 
     final indexOfEquals = lineWithoutComments.indexOf('=');
-    final envKey = trimExportKeyword(lineWithoutComments.substring(0, indexOfEquals));
+    final envKey =
+        trimExportKeyword(lineWithoutComments.substring(0, indexOfEquals));
     if (envKey.isEmpty) return {};
 
-    final envValue = lineWithoutComments.substring(indexOfEquals + 1, lineWithoutComments.length).trim();
+    final envValue = lineWithoutComments
+        .substring(indexOfEquals + 1, lineWithoutComments.length)
+        .trim();
     final quoteChar = getSurroundingQuoteCharacter(envValue);
     var envValueWithoutQuotes = removeSurroundingQuotes(envValue);
     // Add any escapted quotes
@@ -43,10 +47,12 @@ class Parser {
       return {envKey: envValueWithoutQuotes};
     }
     if (quoteChar == '"') {
-      envValueWithoutQuotes = envValueWithoutQuotes.replaceAll('\\"', '"').replaceAll('\\n', '\n');
+      envValueWithoutQuotes =
+          envValueWithoutQuotes.replaceAll('\\"', '"').replaceAll('\\n', '\n');
     }
     // Interpolate bash variables
-    final interpolatedValue = interpolate(envValueWithoutQuotes, envMap).replaceAll("\\\$", "\$");
+    final interpolatedValue =
+        interpolate(envValueWithoutQuotes, envMap).replaceAll("\\\$", "\$");
     return {envKey: interpolatedValue};
   }
 
@@ -82,7 +88,8 @@ class Parser {
       line.replaceAll(includeQuotes ? _commentWithQuotes : _comment, '').trim();
 
   /// Omits 'export' keyword.
-  String trimExportKeyword(String line) => line.replaceAll(_leadingExport, '').trim();
+  String trimExportKeyword(String line) =>
+      line.replaceAll(_leadingExport, '').trim();
 
   bool _isStringWithEqualsChar(String s) => s.isNotEmpty && s.contains('=');
 
