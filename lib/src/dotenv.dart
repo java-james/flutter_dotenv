@@ -123,17 +123,11 @@ class DotEnv {
     try {
       linesFromFile = await _getEntriesFromFile(fileName);
     } on FileNotFoundError {
-      if (isOptional) {
-        linesFromFile = [];
-      } else {
-        rethrow;
-      }
+      if (!isOptional) rethrow;
+      linesFromFile = [];
     } on EmptyEnvFileError {
-      if (isOptional) {
-        linesFromFile = [];
-      } else {
-        rethrow;
-      }
+      if (!isOptional) rethrow;
+      linesFromFile = [];
     }
 
     final linesFromMergeWith = mergeWith.entries
@@ -145,12 +139,17 @@ class DotEnv {
     _isInitialized = true;
   }
 
-  void testLoad(
-      {String fileInput = '',
-      Parser parser = const Parser(),
-      Map<String, String> mergeWith = const {}}) {
+  void loadFromString({
+    String envString = '',
+    Parser parser = const Parser(),
+    Map<String, String> mergeWith = const {},
+    bool isOptional = false,
+  }) {
     clean();
-    final linesFromFile = fileInput.split('\n');
+    if (envString.isEmpty && !isOptional) {
+      throw EmptyEnvFileError();
+    }
+    final linesFromFile = envString.split('\n');
     final linesFromMergeWith = mergeWith.entries
         .map((entry) => "${entry.key}=${entry.value}")
         .toList();
