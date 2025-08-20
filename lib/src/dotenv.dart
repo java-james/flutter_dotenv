@@ -113,27 +113,38 @@ class DotEnv {
 
   /// Loads environment variables from the env file into a map
   /// Merge with any entries defined in [mergeWith]
+
+  /// [overrideWith] is a list of other env files whose values will override values
+  ///   read from [fileName]
+
   Future<void> load(
       {String fileName = '.env',
       Parser parser = const Parser(),
       Map<String, String> mergeWith = const {},
+      List<String> overrideWith = const [],
       bool isOptional = false}) async {
     clean();
     List<String> linesFromFile;
+    List<String> linesFromOverrides;
     try {
       linesFromFile = await _getEntriesFromFile(fileName);
+      linesFromOverrides = await _getLinesFromOverride(overrideWith);
     } on FileNotFoundError {
       if (!isOptional) rethrow;
       linesFromFile = [];
+      linesFromOverrides = [];
     } on EmptyEnvFileError {
       if (!isOptional) rethrow;
       linesFromFile = [];
+      linesFromOverrides = [];
     }
 
     final linesFromMergeWith = mergeWith.entries
         .map((entry) => "${entry.key}=${entry.value}")
         .toList();
-    final allLines = linesFromMergeWith..addAll(linesFromFile);
+    final allLines = linesFromMergeWith
+      ..addAll(linesFromOverrides)
+      ..addAll(linesFromFile);
     final envEntries = parser.parse(allLines);
     _envMap.addAll(envEntries);
     _isInitialized = true;
@@ -141,6 +152,7 @@ class DotEnv {
 
   void loadFromString({
     String envString = '',
+    List<String> overrideWith = const [],
     Parser parser = const Parser(),
     Map<String, String> mergeWith = const {},
     bool isOptional = false,
@@ -150,11 +162,20 @@ class DotEnv {
       throw EmptyEnvFileError();
     }
     final linesFromFile = envString.split('\n');
+    final linesFromOverrides = overrideWith
+        .map((String lines) => lines.split('\n'))
+        .expand((x) => x)
+        .toList();
     final linesFromMergeWith = mergeWith.entries
         .map((entry) => "${entry.key}=${entry.value}")
         .toList();
-    final allLines = linesFromMergeWith..addAll(linesFromFile);
+
+    final allLines = linesFromMergeWith
+      ..addAll(linesFromOverrides)
+      ..addAll(linesFromFile);
+
     final envEntries = parser.parse(allLines);
+
     _envMap.addAll(envEntries);
     _isInitialized = true;
   }
@@ -176,5 +197,17 @@ class DotEnv {
     } on FlutterError {
       throw FileNotFoundError();
     }
+  }
+
+  Future<List<String>> _getLinesFromOverride(List<String> overrideWith) async {
+    List<String> overrideLines = [];
+
+    for (int i = 0; i < overrideWith.length; i++) {
+      final overrideWithFile = overrideWith[i];
+      final lines = await _getEntriesFromFile(overrideWithFile);
+      overrideLines = overrideLines..addAll(lines);
+    }
+
+    return overrideLines;
   }
 }
