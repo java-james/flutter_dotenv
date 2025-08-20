@@ -1,6 +1,9 @@
 # flutter_dotenv
 
 [![Pub Version][pub-badge]][pub]
+[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/java-james)
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/javajames)
 
 [pub]: https://pub.dartlang.org/packages/flutter_dotenv
 [pub-badge]: https://img.shields.io/pub/v/flutter_dotenv.svg
