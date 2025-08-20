@@ -54,8 +54,8 @@ void main() {
   group('dotenv with overrides', () {
     setUp(() {
       print(Directory.current.toString());
-      dotenv.testLoad(
-        fileInput: File('test/.env').readAsStringSync(),
+      dotenv.loadFromString(
+        envString: File('test/.env').readAsStringSync(),
         overrideWith: [File("test/.env-override").readAsStringSync()],
       ); //, mergeWith: Platform.environment
     });
