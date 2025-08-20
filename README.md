@@ -181,16 +181,16 @@ TEST_VALUE=staging-value
 
 ## Using in tests
 
-There is a `testLoad` method that can be used to load a static set of variables for testing.
+There is a `loadFromString` method that can be used to load a static set of variables for testing.
 
 ```dart
 // Loading from a static string.
-dotenv.testLoad(fileInput: '''FOO=foo
+dotenv.loadFromString(fileInput: '''FOO=foo
 BAR=bar
 ''');
 
 // Loading from a file synchronously.
-dotenv.testLoad(fileInput: File('test/.env').readAsStringSync());
+dotenv.loadFromString(fileInput: File('test/.env').readAsStringSync());
 ```
 
 ## Null safety
