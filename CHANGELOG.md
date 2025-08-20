@@ -8,6 +8,10 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
+# 6.0.0-rc.3
+
+- [chore] version bump only
+
 # 6.0.0-rc.2
 
 - [docs] Correct readme documentation on `loadFromString`
