@@ -6,8 +6,8 @@ void main() {
   group('dotenv', () {
     setUp(() {
       print(Directory.current.toString());
-      dotenv.testLoad(
-          fileInput: File('test/.env')
+      dotenv.loadFromString(
+          envString: File('test/.env')
               .readAsStringSync()); // mergeWith: Platform.environment
     });
     test('when .env is loaded we should be able to get the .env variables', () {

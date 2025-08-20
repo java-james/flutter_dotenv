@@ -130,12 +130,13 @@ class DotEnv {
       linesFromFile = await _getEntriesFromFile(fileName);
       linesFromOverrides = await _getLinesFromOverride(overrideWith);
     } on FileNotFoundError {
-      if (isOptional) {
-        linesFromFile = [];
-        linesFromOverrides = [];
-      } else {
-        rethrow;
-      }
+      if (!isOptional) rethrow;
+      linesFromFile = [];
+      linesFromOverrides = [];
+    } on EmptyEnvFileError {
+      if (!isOptional) rethrow;
+      linesFromFile = [];
+      linesFromOverrides = [];
     }
 
     final linesFromMergeWith = mergeWith.entries
@@ -149,20 +150,22 @@ class DotEnv {
     _isInitialized = true;
   }
 
-  void testLoad({
-    String fileInput = '',
+  void loadFromString({
+    String envString = '',
+    List<String> overrideWith = const [],
     Parser parser = const Parser(),
     Map<String, String> mergeWith = const {},
-    List<String> overrideWith = const [],
+    bool isOptional = false,
   }) {
     clean();
-    final linesFromFile = fileInput.split('\n');
-
+    if (envString.isEmpty && !isOptional) {
+      throw EmptyEnvFileError();
+    }
+    final linesFromFile = envString.split('\n');
     final linesFromOverrides = overrideWith
         .map((String lines) => lines.split('\n'))
         .expand((x) => x)
         .toList();
-
     final linesFromMergeWith = mergeWith.entries
         .map((entry) => "${entry.key}=${entry.value}")
         .toList();
