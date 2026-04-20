@@ -132,5 +132,22 @@ void main() {
       expect(dotenv.getBool('COMMENTS', fallback: false), false);
       expect(() => dotenv.getBool('FOO'), throwsFormatException);
     });
+    test('typed getter errors include variable name', () {
+      expect(
+          () => dotenv.getInt('MISSING_VAR'),
+          throwsA(predicate((e) =>
+              e is AssertionError &&
+              e.message.toString().contains('MISSING_VAR'))));
+      expect(
+          () => dotenv.getDouble('MISSING_VAR'),
+          throwsA(predicate((e) =>
+              e is AssertionError &&
+              e.message.toString().contains('MISSING_VAR'))));
+      expect(
+          () => dotenv.getBool('MISSING_VAR'),
+          throwsA(predicate((e) =>
+              e is AssertionError &&
+              e.message.toString().contains('MISSING_VAR'))));
+    });
   });
 }

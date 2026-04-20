@@ -8,6 +8,16 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
+# 6.0.1
+
+- [fix] Replace `assert()` with explicit `if`/`throw` in `getInt()`, `getDouble()`, and `getBool()` so null-safety checks are enforced in release builds (fixes #136)
+- Error messages now include the variable name for easier debugging
+
+### Note on release-build behavior change
+In **debug mode**, behavior is unchanged — `AssertionError` was thrown before, `AssertionError` is thrown now.
+
+In **release mode**, calling `getInt()`, `getDouble()`, or `getBool()` with a missing variable and no fallback previously threw a `TypeError` (from the null-check operator `!`) because `assert()` was stripped. It now correctly throws `AssertionError` with a descriptive message. If your release-mode code catches `on TypeError` around these methods, update it to catch `on AssertionError` (or `on Error`) instead.
+
 # 6.0.0
 
 - [feat] Allow passing in override .env files on init
