@@ -216,11 +216,11 @@ class DotEnv {
       WidgetsFlutterBinding.ensureInitialized();
       var envString = await rootBundle.loadString(filename);
       if (envString.isEmpty) {
-        throw EmptyEnvFileError();
+        throw EmptyEnvFileError(filename: filename);
       }
       return envString.split('\n');
     } on FlutterError {
-      throw FileNotFoundError();
+      throw FileNotFoundError(filename);
     }
   }
 
