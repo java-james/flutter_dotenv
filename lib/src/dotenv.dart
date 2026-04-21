@@ -45,8 +45,11 @@ class DotEnv {
 
   bool get isInitialized => _isInitialized;
 
-  /// Clear [env]
-  void clean() => _envMap.clear();
+  /// Clear [env] and reset initialization state
+  void clean() {
+    _envMap.clear();
+    _isInitialized = false;
+  }
 
   String get(String name, {String? fallback}) {
     final value = maybeGet(name, fallback: fallback);
@@ -134,19 +137,26 @@ class DotEnv {
     Parser parser = const Parser(),
   }) async {
     clean();
-    List<String> linesFromFile;
-    List<String> linesFromOverrides;
+    List<String> linesFromFile = [];
+    List<String> linesFromOverrides = [];
+
     try {
       linesFromFile = await _getEntriesFromFile(fileName);
-      linesFromOverrides = await _getLinesFromOverride(overrideWithFiles);
     } on FileNotFoundError {
       if (!isOptional) rethrow;
-      linesFromFile = [];
-      linesFromOverrides = [];
     } on EmptyEnvFileError {
       if (!isOptional) rethrow;
-      linesFromFile = [];
-      linesFromOverrides = [];
+    }
+
+    for (final overrideFile in overrideWithFiles) {
+      try {
+        final lines = await _getEntriesFromFile(overrideFile);
+        linesFromOverrides.addAll(lines);
+      } on FileNotFoundError {
+        if (!isOptional) rethrow;
+      } on EmptyEnvFileError {
+        if (!isOptional) rethrow;
+      }
     }
 
     final linesFromMergeWith = mergeWith.entries
@@ -214,15 +224,4 @@ class DotEnv {
     }
   }
 
-  Future<List<String>> _getLinesFromOverride(List<String> overrideWith) async {
-    List<String> overrideLines = [];
-
-    for (int i = 0; i < overrideWith.length; i++) {
-      final overrideWithFile = overrideWith[i];
-      final lines = await _getEntriesFromFile(overrideWithFile);
-      overrideLines = overrideLines..addAll(lines);
-    }
-
-    return overrideLines;
-  }
 }

@@ -150,4 +150,66 @@ void main() {
               e.message.toString().contains('MISSING_VAR'))));
     });
   });
+
+  group('clean() resets initialization state', () {
+    test('after clean(), isInitialized is false', () {
+      dotenv.loadFromString(envString: 'FOO=bar');
+      expect(dotenv.isInitialized, isTrue);
+      dotenv.clean();
+      expect(dotenv.isInitialized, isFalse);
+    });
+
+    test('after clean(), accessing env throws NotInitializedError', () {
+      dotenv.loadFromString(envString: 'FOO=bar');
+      expect(dotenv.env['FOO'], 'bar');
+      dotenv.clean();
+      expect(() => dotenv.env, throwsA(isA<NotInitializedError>()));
+    });
+
+    test(
+        'loadFromString after clean() re-initializes correctly', () {
+      dotenv.loadFromString(envString: 'FOO=bar');
+      dotenv.clean();
+      dotenv.loadFromString(envString: 'BAZ=qux');
+      expect(dotenv.isInitialized, isTrue);
+      expect(dotenv.env['BAZ'], 'qux');
+      expect(dotenv.env['FOO'], isNull);
+    });
+  });
+
+  group('isOptional override loading', () {
+    test(
+        'loadFromString with valid base and empty override preserves base vars',
+        () {
+      dotenv.loadFromString(
+        envString: 'FOO=bar\nBAZ=qux',
+        overrideWith: [''],
+        isOptional: true,
+      );
+      expect(dotenv.env['FOO'], 'bar');
+      expect(dotenv.env['BAZ'], 'qux');
+    });
+
+    test('loadFromString with empty base and valid override preserves override',
+        () {
+      dotenv.loadFromString(
+        envString: '',
+        overrideWith: ['OVERRIDE_KEY=override_value'],
+        isOptional: true,
+      );
+      expect(dotenv.env['OVERRIDE_KEY'], 'override_value');
+    });
+
+    test(
+        'loadFromString with isOptional=false and empty base throws even with valid override',
+        () {
+      expect(
+          () => dotenv.loadFromString(
+                envString: '',
+                overrideWith: ['OVERRIDE_KEY=override_value'],
+                isOptional: false,
+              ),
+          throwsA(isA<EmptyEnvFileError>()));
+    });
+  });
 }

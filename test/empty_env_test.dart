@@ -30,7 +30,7 @@ void main() {
       }, throwsA(isA<EmptyEnvFileError>()));
     });
 
-    test('missing .env file with isOptional=true should not throw', () {
+    test('empty string with isOptional=true should not throw', () {
       File emptyFile = File('test/.env.empty');
       expect(() {
         dotenv.loadFromString(
@@ -41,8 +41,7 @@ void main() {
       expect(dotenv.env.isEmpty, isTrue);
     });
 
-    test(
-        'missing .env file with isOptional=false should throw FileNotFoundError',
+    test('empty string with isOptional=false should throw EmptyEnvFileError',
         () {
       expect(() {
         dotenv.loadFromString(envString: '', isOptional: false);
