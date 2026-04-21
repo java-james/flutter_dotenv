@@ -66,8 +66,10 @@ class DotEnv {
   /// exists but can not be parsed as an [int].
   int getInt(String name, {int? fallback}) {
     final value = maybeGet(name);
-    assert(value != null || fallback != null,
-        'A non-null fallback is required for missing entries');
+    if (value == null && fallback == null) {
+      throw AssertionError(
+          '$name variable not found. A non-null fallback is required for missing entries');
+    }
     return value != null ? int.parse(value) : fallback!;
   }
 
@@ -80,8 +82,10 @@ class DotEnv {
   /// exists but can not be parsed as a [double].
   double getDouble(String name, {double? fallback}) {
     final value = maybeGet(name);
-    assert(value != null || fallback != null,
-        'A non-null fallback is required for missing entries');
+    if (value == null && fallback == null) {
+      throw AssertionError(
+          '$name variable not found. A non-null fallback is required for missing entries');
+    }
     return value != null ? double.parse(value) : fallback!;
   }
 
@@ -94,8 +98,10 @@ class DotEnv {
   /// exists but can not be parsed as a [bool].
   bool getBool(String name, {bool? fallback}) {
     final value = maybeGet(name);
-    assert(value != null || fallback != null,
-        'A non-null fallback is required for missing entries');
+    if (value == null && fallback == null) {
+      throw AssertionError(
+          '$name variable not found. A non-null fallback is required for missing entries');
+    }
     if (value != null) {
       if (['true', '1'].contains(value.toLowerCase())) {
         return true;
