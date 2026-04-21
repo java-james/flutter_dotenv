@@ -1,276 +1,310 @@
 # flutter_dotenv
 
-[![Pub Version][pub-badge]][pub]
-[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/java-james)
+[![Pub Version](https://img.shields.io/pub/v/flutter_dotenv.svg)](https://pub.dev/packages/flutter_dotenv)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/javajames)
+Load configuration into your Flutter app from a `.env` asset file or string.
 
-[pub]: https://pub.dartlang.org/packages/flutter_dotenv
-[pub-badge]: https://img.shields.io/pub/v/flutter_dotenv.svg
-
-Load configuration at runtime from a `.env` file which can be used throughout the application.
-
-> **The [twelve-factor app][12fa] stores [config][cfg] in _environment variables_**
-> (often shortened to _env vars_ or _env_). Env vars are easy to change
-> between deploys without changing any code... they are a language- and
-> OS-agnostic standard.
-
-[12fa]: https://www.12factor.net
-[cfg]: https://12factor.net/config
-
-# About
-
-This library is a fork of [mockturtl/dotenv] dart library, initially with slight changes to make it work with flutter.
-
-[mockturtl/dotenv]: https://pub.dartlang.org/packages/dotenv
-
-An _environment_ is the set of variables known to a process (say, `PATH`, `PORT`, ...).
-It is desirable to mimic the production environment during development (testing,
-staging, ...) by reading these values from a file.
-
-This library parses that file and merges its values with the built-in
-[`Platform.environment`][docs-io] map.
-
-[docs-io]: https://api.dartlang.org/apidocs/channels/stable/dartdoc-viewer/dart:io.Platform#id_environment
-
-# Security Considerations
-
-Sensitive keys like API keys and tokens should not be stored in your Flutter app. They can be extracted even if obfuscated. This libary currently does not obfuscate variables as it may lull the consumers into a false sense of security. Use environment variables on the frontend application for non-sensitive configuration values, such as API endpoints and feature flags.
-
-For more details on mobile app security best practices, refer to the [OWASP Mobile Security Project.](https://owasp.org/www-project-mobile-top-10/)
-
-# Usage
-
-1. Create a `.env` file in the root of your project with the example content:
+## Install
 
 ```sh
-FOO=foo
-BAR=bar
-FOOBAR=$FOO$BAR
-ESCAPED_DOLLAR_SIGN='$1000'
-# This is a comment
+flutter pub add flutter_dotenv
 ```
 
-> Note: If deploying to web server, ensure that the config file is uploaded and not ignored. (Whitelist the config file on the server, or name the config file without a leading `.`)
+## Quick start
 
-2. Add the `.env` file to your assets bundle in `pubspec.yaml`. **Ensure that the path corresponds to the location of the .env file!**
+**1. Create a `.env` file** in your project root:
 
-```yml
+```sh
+API_URL=https://api.example.com
+MAX_RETRIES=3
+DEBUG=true
+```
+
+**2. Register it as an asset** in `pubspec.yaml`:
+
+```yaml
 flutter:
   assets:
     - .env
 ```
 
-3. Remember to add the `.env` file as an entry in your `.gitignore` if it isn't already unless you want it included in your version control.
-
-```txt
-*.env
-```
-
-4. Load the `.env` file in `main.dart`. Note that `flutter_dotenv >=5.0.0` has a slightly different syntax for consuming the DotEnv data.
-
-**v5.0.0 and later**
+**3. Load and use:**
 
 ```dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// DotEnv dotenv = DotEnv() is automatically called during import.
-// If you want to load multiple dotenv files or name your dotenv object differently, you can do the following and import the singleton into the relavant files:
-// DotEnv another_dotenv = DotEnv()
-
-Future main() async {
-  // To load the .env file contents into dotenv.
-  // NOTE: fileName defaults to .env and can be omitted in this case.
-  // Ensure that the filename corresponds to the path in step 1 and 2.
-  await dotenv.load(fileName: ".env");
-  //...runapp
-}
-```
-
-You can then access variables from `.env` throughout the application
-
-```dart
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-dotenv.env['VAR_NAME'];
-```
-
-**Before v5.0.0**
-
-```dart
-import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
-
-Future main() async {
-  await DotEnv.load(fileName: ".env");
-  //...runapp
-}
-```
-
-Access env using:
-
-```dart
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-env['VAR_NAME'];
-```
-
-Optionally you could map `env` after load to a config model to access a config with types.
-
-# Advanced usage
-
-Refer to the `test/dotenv_test.dart` file for a better idea of the behaviour of the `.env` parser.
-
-
-## Get with typing
-
-It's a common pattern to get an env variable then parse it as a type. You can get variables that are already typed by using the following functions:
-
-```dart
-  // someBool is a bool
-  final someBool = dotenv.getBool('VAR_NAME', fallback: true);
-  // someDouble is a double
-  final someDouble = dotenv.getDouble('VAR_NAME', fallback: .3);
-  // someInt is an int
-  final someInt = dotenv.getInt('VAR_NAME', fallback: 42);
-```
-
-## Referencing
-
-You can reference variables defined above other within `.env`:
-
-```
-  FOO=foo
-  BAR=bar
-  FOOBAR=$FOO$BAR
-```
-
-You can escape referencing by wrapping the value in single quotes:
-
-```dart
-ESCAPED_DOLLAR_SIGN='$1000'
-```
-
-## Merging
-
-You can merge a map into the environment on load:
-
-```dart
-  await dotenv.load(mergeWith: { "FOO": "foo", "BAR": "bar"});
-```
-
-You can also reference these merged variables within `.env`:
-
-```
-  FOOBAR=$FOO$BAR
-```
-
-## Merge with other env files:
-
-Useful for defining a base set of values, and overriding a subset based on environment. Env files specified first take precedence.
-
-```env
-# .env
-TEST_VALUE=base-value
-```
-
-```env
-# .env-staging
-TEST_VALUE=staging-value
-```
-
-```dart
-  await dotenv.load(fileName: ".env", overrideWith: [".env-staging"]);
-
-  dotenv.get("TEST_VALUE") // => "staging-value"
-```
-
-## Using in tests
-
-There is a `loadFromString` method that can be used to load a static set of variables for testing.
-
-```dart
-// Loading from a static string.
-dotenv.loadFromString(fileInput: '''FOO=foo
-BAR=bar
-''');
-
-// Loading from a file synchronously.
-dotenv.loadFromString(fileInput: File('test/.env').readAsStringSync());
-```
-
-## Null safety
-
-To avoid null-safety checks for variables that are known to exist, there is a `get()` method that
-will throw an exception if the variable is undefined. You can also specify a default fallback 
-value for when the variable is undefined in the .env file.
-
-```dart
 Future<void> main() async {
   await dotenv.load();
-
-  String foo = dotenv.get('VAR_NAME');
-
-  // Or with fallback.
-  String bar = dotenv.get('MISSING_VAR_NAME', fallback: 'sane-default');
-
-  // This would return null.
-  String? baz = dotenv.maybeGet('MISSING_VAR_NAME', fallback: null);
+  runApp(const MyApp());
 }
 ```
 
-## Usage with Platform Environment
-
-The Platform.environment map can be merged into the env:
+After loading, access values anywhere you import the package:
 
 ```dart
-  // For example using Platform.environment that contains a CLIENT_ID entry
-  await dotenv.load(mergeWith: Platform.environment);
-  print(env["CLIENT_ID"]);
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+String apiUrl = dotenv.get('API_URL');
+int retries = dotenv.getInt('MAX_RETRIES', fallback: 1);
+bool debug = dotenv.getBool('DEBUG', fallback: false);
 ```
 
-Like other merged entries described above, `.env` entries can reference these merged Platform.Environment entries if required:
+If your `.env` file is in a subdirectory (e.g. `assets/.env`), pass `fileName: 'assets/.env'` to `load()` and register the same path in `pubspec.yaml`.
 
+You do not need to call `WidgetsFlutterBinding.ensureInitialized()` — the library handles this internally when loading assets.
+
+> **Tip:** Add `.env` to your `.gitignore` if it contains values you don't want in version control.
+
+## Security
+
+**Do not store secrets (API keys, tokens, passwords) in your `.env` file.** Flutter assets are bundled into the app binary and can be extracted by anyone with access to the build. Values loaded by this package should be treated as public client-side configuration.
+
+Use `.env` files for non-sensitive configuration only — API base URLs, feature flags, timeout values, and similar settings.
+
+For guidance on securing sensitive data, see the [OWASP Mobile Top 10](https://owasp.org/www-project-mobile-top-10/).
+
+## Reading variables
+
+The package exports a singleton instance named `dotenv`. Accessing any variable before calling `load()` or `loadFromString()` throws `NotInitializedError`.
+
+Use `get()` for required values, `maybeGet()` for optional values, and `env[...]` when direct map access is preferred.
+
+| Method | Returns | When missing |
+|--------|---------|-------------|
+| `dotenv.env['NAME']` | `String?` | `null` |
+| `dotenv.get('NAME')` | `String` | Throws `AssertionError` |
+| `dotenv.get('NAME', fallback: 'x')` | `String` | `'x'` |
+| `dotenv.maybeGet('NAME')` | `String?` | `null` |
+| `dotenv.maybeGet('NAME', fallback: 'x')` | `String?` | `'x'` |
+
+> `dotenv.env` exposes the loaded key-value map directly. Treat it as read-only.
+
+### Typed getters
+
+Parse values directly as `int`, `double`, or `bool`:
+
+```dart
+final retries = dotenv.getInt('MAX_RETRIES', fallback: 3);
+final rate    = dotenv.getDouble('RATE', fallback: 0.5);
+final debug   = dotenv.getBool('DEBUG', fallback: false);
 ```
-  CLIENT_URL=https://$CLIENT_ID.dev.domain.com
+
+All typed getters throw `AssertionError` if the variable is missing and no `fallback` is provided, and `FormatException` if the value cannot be parsed. `getBool` recognises `true`, `false`, `1`, and `0` (case-insensitive).
+
+### Validating required variables
+
+```dart
+const required = ['API_URL', 'MAX_RETRIES'];
+if (!dotenv.isEveryDefined(required)) {
+  throw Exception('Missing required env variables');
+}
 ```
 
-# Security Considerations
+`isEveryDefined()` returns `true` only when every listed variable exists with a non-empty value.
 
-### Never store sensitive keys in the frontend:
+## Loading
 
-Sensitive keys like API keys and tokens should not be stored in your Flutter app. They can be extracted even if obfuscated. This libary currently chooses not to ocfuscate the variables as it may lull the consumers into a false sense of security. Use environment variables for non-sensitive configuration values, such as API endpoints and feature flags. 
+### `load()`
 
-# Discussion
+Load variables from a `.env` asset file:
 
-Use the [issue tracker][tracker] for bug reports and feature requests.
+```dart
+await dotenv.load(
+  fileName: '.env',
+  overrideWithFiles: ['.env.staging'],
+  mergeWith: {'BUILD': 'ci'},
+  isOptional: false,
+);
+```
 
-Pull requests are welcome.
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `fileName` | `String` | `'.env'` | Asset path of the env file (must match `pubspec.yaml`). |
+| `overrideWithFiles` | `List<String>` | `[]` | Additional env asset files. |
+| `mergeWith` | `Map<String, String>` | `{}` | Key-value pairs to merge. |
+| `isOptional` | `bool` | `false` | When `true`, missing or empty files don't throw. |
+| `parser` | `Parser` | `Parser()` | Custom parser instance. |
 
-[tracker]: https://github.com/java-james/flutter_dotenv/issues
+When `isOptional` is `true`, `FileNotFoundError` and `EmptyEnvFileError` are suppressed.
 
-# Prior art
+### `loadFromString()`
 
-[flutter_dotenv]: https://pub.dartlang.org/packages/dotenv
+Load variables from a string — useful for tests or computed configuration:
 
-- [mockturtl/dotenv][] (dart)
-- [bkeepers/dotenv][] (ruby)
-- [motdotla/dotenv][] (node)
-- [theskumar/python-dotenv][] (python)
-- [joho/godotenv][] (go)
-- [slapresta/rust-dotenv][] (rust)
-- [chandu/dotenv][] (c#)
-- [tpope/lein-dotenv][], [rentpath/clj-dotenv][] (clojure)
-- [mefellows/sbt-dotenv][] (scala)
-- [greenspun/dotenv][] (half of common lisp)
+```dart
+dotenv.loadFromString(envString: 'FOO=bar\nBAZ=qux');
+```
 
-[mockturtl/dotenv]: https://pub.dartlang.org/packages/dotenv
-[bkeepers/dotenv]: https://github.com/bkeepers/dotenv
-[motdotla/dotenv]: https://github.com/motdotla/dotenv
-[theskumar/python-dotenv]: https://github.com/theskumar/python-dotenv
-[joho/godotenv]: https://github.com/joho/godotenv
-[slapresta/rust-dotenv]: https://github.com/slapresta/rust-dotenv
-[chandu/dotenv]: https://github.com/Chandu/DotEnv
-[tpope/lein-dotenv]: https://github.com/tpope/lein-dotenv
-[rentpath/clj-dotenv]: https://github.com/rentpath/clj-dotenv
-[mefellows/sbt-dotenv]: https://github.com/mefellows/sbt-dotenv
-[greenspun/dotenv]: https://www.youtube.com/watch?v=pUjJU8Bbn3g
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `envString` | `String` | `''` | The env-formatted string to parse. |
+| `overrideWith` | `List<String>` | `[]` | Additional env strings whose values take precedence. |
+| `mergeWith` | `Map<String, String>` | `{}` | Key-value pairs to merge. |
+| `isOptional` | `bool` | `false` | When `true`, an empty string doesn't throw. |
+| `parser` | `Parser` | `Parser()` | Custom parser instance. |
 
-# license: [MIT](LICENSE)
+When `isOptional` is `true`, `EmptyEnvFileError` is suppressed.
+
+### Value precedence
+
+Both `load()` and `loadFromString()` call `clean()` first, replacing any previously loaded state. The parser keeps the **first value** it sees for each key. Lines are processed in this order:
+
+| Priority | Source |
+|----------|--------|
+| 1 (highest) | `mergeWith` |
+| 2 | Override files / strings |
+| 3 (lowest) | Base file / string |
+
+> **Note:** `mergeWith` values cannot be overridden by the env file. If you want the `.env` file to take precedence over programmatic values, use override files instead of `mergeWith`.
+
+### State management
+
+| Member | Description |
+|--------|-------------|
+| `dotenv.isInitialized` | `true` after a successful `load()` or `loadFromString()`. |
+| `dotenv.clean()` | Clears all loaded variables and resets `isInitialized` to `false`. |
+
+After calling `clean()`, all read methods (`env`, `get()`, `maybeGet()`, typed getters) will throw `NotInitializedError` until the next `load()` or `loadFromString()`.
+
+### Errors
+
+| Error | Thrown when |
+|-------|------------|
+| `NotInitializedError` | Accessing `dotenv.env` before loading. |
+| `FileNotFoundError` | The env file is not in the asset bundle (`load()` only). |
+| `EmptyEnvFileError` | The env file or string is empty. |
+| `AssertionError` | A required variable is missing and no fallback was provided. |
+| `FormatException` | A typed getter can't parse the value. |
+
+## `.env` file syntax
+
+```sh
+# Comments start with #
+KEY=value
+QUOTED="double quoted value"
+SINGLE='single quoted value'
+
+# Variable interpolation
+BASE_URL=https://api.example.com
+FULL_URL=$BASE_URL/v1
+ALT_URL=${BASE_URL}/v1
+
+# Prevent interpolation with single quotes
+PRICE='$9.99'
+
+# Newlines in double quotes
+MULTI="line1\nline2"
+
+# The export keyword is stripped automatically
+export EXPORTED=hello
+```
+
+**Parsing rules:**
+- Lines without `=` are ignored.
+- `#` starts a comment unless inside quotes.
+- Double-quoted values expand `\n` to newlines and interpolate `$VAR` / `${VAR}`.
+- Single-quoted values do not interpolate variables. Escaped single quotes (`\'`) are unescaped.
+- Undefined variables interpolate to an empty string.
+- Unquoted values are trimmed of surrounding whitespace.
+- If the same key appears multiple times anywhere in the processed input, the first occurrence wins (see [value precedence](#value-precedence)).
+- Leading `export` keyword is stripped.
+- This is not a full shell parser. Complex shell expressions are not supported.
+
+## Multiple environments
+
+Layer environment-specific values over a shared base using override files:
+
+```sh
+# .env
+API_URL=https://api.example.com
+LOG_LEVEL=warning
+```
+
+```sh
+# .env.staging
+API_URL=https://staging.api.example.com
+LOG_LEVEL=debug
+```
+
+```dart
+await dotenv.load(overrideWithFiles: ['.env.staging']);
+
+dotenv.get('API_URL');   // => "https://staging.api.example.com"
+dotenv.get('LOG_LEVEL'); // => "debug"
+```
+
+Override files take precedence over the base file. Register all env files as assets in `pubspec.yaml`.
+
+## Multiple instances
+
+The package exports a pre-created singleton `dotenv` for the common case. You can also create separate instances for different configurations — each instance maintains its own independent state:
+
+```dart
+final publicConfig = DotEnv();
+final featureFlags = DotEnv();
+
+await publicConfig.load(fileName: '.env');
+await featureFlags.load(fileName: '.env.features');
+
+String apiUrl = publicConfig.get('API_URL');
+bool beta = featureFlags.getBool('BETA_ENABLED', fallback: false);
+```
+
+## Merging with Platform.environment
+
+On platforms where `dart:io` is available (mobile, desktop), you can merge system environment variables:
+
+```dart
+import 'dart:io' show Platform;
+
+await dotenv.load(mergeWith: Platform.environment);
+```
+
+Merged values take precedence over values declared in the env file (see [value precedence](#value-precedence)). Variables in the `.env` file can reference merged values:
+
+```sh
+CLIENT_URL=https://$CLIENT_ID.dev.example.com
+```
+
+> **Note:** `Platform.environment` is not available on Flutter web.
+
+## Troubleshooting
+
+| Problem | Cause | Solution |
+|---------|-------|----------|
+| `FileNotFoundError` | The file isn't registered as an asset. | Add the exact path to `flutter: assets:` in `pubspec.yaml` and restart the app. |
+| `EmptyEnvFileError` | The env file or string has no content. | Add at least one `KEY=value` entry, or use `isOptional: true`. |
+| `NotInitializedError` | Accessing `dotenv.env` before loading. | Call `await dotenv.load()` in `main()` before `runApp()`. |
+| `dotenv.env['NAME']` returns `null` | Key mismatch or the file wasn't loaded. | Check for typos. Verify `load()` completed successfully. |
+| `mergeWith` value not overridden by `.env` | `mergeWith` has highest precedence. | Move the value into an override file, or stop passing it via `mergeWith`. |
+| Web deploy: file not found | Web servers may ignore dotfiles. | Rename the file (e.g. `env` or `config.env`) and update `fileName` and `pubspec.yaml`. |
+| `FormatException` on typed getter | The value can't be parsed as the requested type. | Check the raw value with `dotenv.env['NAME']`. |
+
+## Migration from older versions
+
+**v5.x to v6.0:**
+- `testLoad()` was renamed to `loadFromString()`.
+- Empty files with `isOptional: true` no longer throw.
+
+**v4.x to v5.0:**
+- Methods moved from top-level functions into the `DotEnv` class.
+- Replace `load()` with `dotenv.load()` and `env['X']` with `dotenv.env['X']`.
+
+## Example
+
+See the [example app](example/) for a complete working project, or browse the [API docs on pub.dev](https://pub.dev/documentation/flutter_dotenv/latest/).
+
+## Contributing
+
+[Issue tracker](https://github.com/java-james/flutter_dotenv/issues) — bug reports and feature requests welcome. Pull requests are welcome.
+
+## Support
+
+[![Sponsor on GitHub](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/java-james)
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/javajames)
+
+## License
+
+[MIT](LICENSE)
