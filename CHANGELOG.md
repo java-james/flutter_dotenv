@@ -12,11 +12,16 @@ Release notes are available on [github][notes].
 
 - [fix] Replace `assert()` with explicit `if`/`throw` in `getInt()`, `getDouble()`, and `getBool()` so null-safety checks are enforced in release builds
 - Error messages now include the variable name for easier debugging
+- [fix] `load(isOptional: true)` no longer discards successfully loaded base file when an override file is missing or empty (fixes #70, #93, #101, #125)
+- [fix] `clean()` now resets `isInitialized` to `false`, so accessing `env` after `clean()` correctly throws `NotInitializedError`
 
 ### Note on release-build behavior change
 In **debug mode**, behavior is unchanged — `AssertionError` was thrown before, `AssertionError` is thrown now.
 
 In **release mode**, calling `getInt()`, `getDouble()`, or `getBool()` with a missing variable and no fallback previously threw a `TypeError` (from the null-check operator `!`) because `assert()` was stripped. It now correctly throws `AssertionError` with a descriptive message. If your release-mode code catches `on TypeError` around these methods, update it to catch `on AssertionError` (or `on Error`) instead.
+
+### Breaking change: `clean()` now resets initialization state
+Previously, calling `clean()` only cleared the env map but left `isInitialized == true`. Now it also sets `isInitialized = false`. Code that calls `clean()` and then immediately accesses `dotenv.env` without reloading will now throw `NotInitializedError`. The fix is to call `load()` or `loadFromString()` again after `clean()`.
 
 # 6.0.0
 
