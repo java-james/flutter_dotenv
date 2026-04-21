@@ -20,7 +20,7 @@ void main() {
       expect(dotenv.env.isEmpty, isTrue);
     });
 
-    test('empty .env file with isOptional=false should throw FileEmptyError',
+    test('empty .env file with isOptional=false should throw EmptyEnvFileError',
         () {
       // This test verifies that an empty .env file still throws when isOptional is false
       expect(() {
