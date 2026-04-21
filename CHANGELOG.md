@@ -14,6 +14,11 @@ Release notes are available on [github][notes].
 - Error messages now include the variable name for easier debugging
 - [fix] `load(isOptional: true)` no longer discards successfully loaded base file when an override file is missing or empty (fixes #70, #93, #101, #125)
 - [fix] `clean()` now resets `isInitialized` to `false`, so accessing `env` after `clean()` correctly throws `NotInitializedError`
+- [fix] Error classes (`NotInitializedError`, `FileNotFoundError`, `EmptyEnvFileError`) now include informative messages in `toString()` instead of the unhelpful `Instance of 'ClassName'` (fixes #40, #6, #72, #89, #59, #127)
+- `FileNotFoundError` and `EmptyEnvFileError` now carry the filename when available
+
+### Note on error message improvements
+`NotInitializedError`, `FileNotFoundError`, and `EmptyEnvFileError` now override `toString()` with actionable messages (e.g., `FileNotFoundError: Environment file ".env" not found. Ensure the file exists and is listed under assets in pubspec.yaml.`). This is **not a breaking change** — the class names and hierarchy are unchanged, so existing `on FileNotFoundError` catch clauses continue to work. `FileNotFoundError` now accepts an optional positional `filename` parameter, and `EmptyEnvFileError` accepts an optional named `filename` parameter; both default to `null` for backward compatibility.
 
 ### Note on release-build behavior change
 In **debug mode**, behavior is unchanged — `AssertionError` was thrown before, `AssertionError` is thrown now.
