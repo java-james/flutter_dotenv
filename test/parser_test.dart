@@ -36,18 +36,18 @@ void main() {
       expect(out, isEmpty);
     });
     test('it knows quoted # is not a comment', () {
-      var doub = psr.parseOne('foo = "ab#c"');
-      var single = psr.parseOne("foo = 'ab#c'");
+      final doub = psr.parseOne('foo = "ab#c"');
+      final single = psr.parseOne("foo = 'ab#c'");
 
       expect(doub['foo'], equals('ab#c'));
       expect(single['foo'], equals('ab#c'));
     });
     test('it handles quotes in a comment', () {
       // note terminal whitespace
-      var sing = psr.parseOne("fruit = 'banana' # comments can be 'sneaky!' ");
-      var doub =
+      final sing = psr.parseOne("fruit = 'banana' # comments can be 'sneaky!' ");
+      final doub =
           psr.parseOne('fruit = " banana" # comments can be "sneaky!" ');
-      var none =
+      final none =
           psr.parseOne('fruit =    banana  # comments can be "sneaky!" ');
 
       expect(sing['fruit'], equals('banana'));
@@ -55,37 +55,30 @@ void main() {
       expect(none['fruit'], equals('banana'));
     });
     test('treats all # in unquoted as comments', () {
-      var fail =
+      final fail =
           psr.parseOne('fruit = banana # I\'m a comment with a final "quote"');
       expect(fail['fruit'], equals('banana'));
     });
 
     test('it handles unquoted values', () {
-      var out = psr.removeSurroundingQuotes('   str   ');
+      final out = psr.removeSurroundingQuotes('   str   ');
       expect(out, equals('str'));
     });
     test('it handles double quoted values', () {
-      var out = psr.removeSurroundingQuotes('"val "');
+      final out = psr.removeSurroundingQuotes('"val "');
       expect(out, equals('val '));
     });
     test('it handles single quoted values', () {
-      var out = psr.removeSurroundingQuotes("'  val'");
+      final out = psr.removeSurroundingQuotes("'  val'");
       expect(out, equals('  val'));
     });
     test('retain trailing single quote', () {
-      var out = psr.removeSurroundingQuotes("retained'");
+      final out = psr.removeSurroundingQuotes("retained'");
       expect(out, equals("retained'"));
     });
 
-    // test('it handles escaped quotes within values', () { // Does not
-    //   var out = _psr.unquote('''\'val_with_\\"escaped\\"_\\'quote\\'s \'''');
-    //   expect(out, equals('''val_with_"escaped"_'quote's '''));
-    //   out = _psr.unquote("  val_with_\"escaped\"_\'quote\'s ");
-    //   expect(out, equals('''val_with_"escaped"_'quote's'''));
-    // });
-
     test('it skips empty lines', () {
-      var out = psr.parse([
+      final out = psr.parse([
         '# Define environment variables.',
         '  # comments will be stripped',
         'foo=bar  # trailing junk',
@@ -96,55 +89,55 @@ void main() {
     });
 
     test('it ignores duplicate keys', () {
-      var out = psr.parse(['foo=bar', 'foo=baz']);
+      final out = psr.parse(['foo=bar', 'foo=baz']);
       expect(out, equals({'foo': 'bar'}));
     });
     test('it substitutes known variables into other values', () {
-      var out = psr.parse(['foo=bar', r'baz=super$foo${foo}']);
+      final out = psr.parse(['foo=bar', r'baz=super$foo${foo}']);
       expect(out, equals({'foo': 'bar', 'baz': 'superbarbar'}));
     });
     test('it discards surrounding quotes', () {
-      var out = psr.parse([r"foo = 'bar'", r'export baz="qux"']);
+      final out = psr.parse([r"foo = 'bar'", r'export baz="qux"']);
       expect(out, equals({'foo': 'bar', 'baz': 'qux'}));
     });
 
     test('it detects unquoted values', () {
-      var out = psr.getSurroundingQuoteCharacter('no quotes here!');
+      final out = psr.getSurroundingQuoteCharacter('no quotes here!');
       expect(out, isEmpty);
     });
     test('it detects double-quoted values', () {
-      var out = psr.getSurroundingQuoteCharacter('"double quoted"');
+      final out = psr.getSurroundingQuoteCharacter('"double quoted"');
       expect(out, equals('"'));
     });
     test('it detects single-quoted values', () {
-      var out = psr.getSurroundingQuoteCharacter("'single quoted'");
+      final out = psr.getSurroundingQuoteCharacter("'single quoted'");
       expect(out, equals("'"));
     });
 
     test('it performs variable substitution', () {
-      var out = psr.interpolate(r'a$foo$baz', {'foo': 'bar', 'baz': 'qux'});
+      final out = psr.interpolate(r'a$foo$baz', {'foo': 'bar', 'baz': 'qux'});
       expect(out, equals('abarqux'));
     });
     test('it skips undefined variables', () {
-      var r = rand.nextInt(ceil); // avoid runtime collision with real env vars
-      var out = psr.interpolate('a\$jinx_$r', {});
+      final r = rand.nextInt(ceil); // avoid runtime collision with real env vars
+      final out = psr.interpolate('a\$jinx_$r', {});
       expect(out, equals('a'));
     });
     test('it handles explicitly null values in env', () {
-      var r = rand.nextInt(ceil); // avoid runtime collision with real env vars
-      var out = psr.interpolate('a\$foo_$r\$baz_$r', {'foo_$r': null});
+      final r = rand.nextInt(ceil); // avoid runtime collision with real env vars
+      final out = psr.interpolate('a\$foo_$r\$baz_$r', {'foo_$r': null});
       expect(out, equals('a'));
     });
     test('it handles \${surrounding braces} on vars', () {
-      var r = rand.nextInt(ceil); // avoid runtime collision with real env vars
-      var out = psr.interpolate('optional_\${foo_$r}', {'foo_$r': 'curlies'});
+      final r = rand.nextInt(ceil); // avoid runtime collision with real env vars
+      final out = psr.interpolate('optional_\${foo_$r}', {'foo_$r': 'curlies'});
       expect(out, equals('optional_curlies'));
     });
 
     test('it handles equal signs in values', () {
-      var none = psr.parseOne('foo=bar=qux');
-      var sing = psr.parseOne("foo='bar=qux'");
-      var doub = psr.parseOne('foo="bar=qux"');
+      final none = psr.parseOne('foo=bar=qux');
+      final sing = psr.parseOne("foo='bar=qux'");
+      final doub = psr.parseOne('foo="bar=qux"');
 
       expect(none['foo'], equals('bar=qux'));
       expect(sing['foo'], equals('bar=qux'));
@@ -152,18 +145,18 @@ void main() {
     });
 
     test('it skips var substitution in single quotes', () {
-      var r = rand.nextInt(ceil); // avoid runtime collision with real env vars
-      var out = psr.parseOne("some_var='my\$key_$r'", envMap: {'key_$r': 'val'});
+      final r = rand.nextInt(ceil); // avoid runtime collision with real env vars
+      final out = psr.parseOne("some_var='my\$key_$r'", envMap: {'key_$r': 'val'});
       expect(out['some_var'], equals('my\$key_$r'));
     });
     test('it performs var subs in double quotes', () {
-      var r = rand.nextInt(ceil); // avoid runtime collision with real env vars
-      var out = psr.parseOne('some_var="my\$key_$r"', envMap: {'key_$r': 'val'});
+      final r = rand.nextInt(ceil); // avoid runtime collision with real env vars
+      final out = psr.parseOne('some_var="my\$key_$r"', envMap: {'key_$r': 'val'});
       expect(out['some_var'], equals('myval'));
     });
     test('it performs var subs without quotes', () {
-      var r = rand.nextInt(ceil); // avoid runtime collision with real env vars
-      var out = psr.parseOne("some_var=my\$key_$r", envMap: {'key_$r': 'val'});
+      final r = rand.nextInt(ceil); // avoid runtime collision with real env vars
+      final out = psr.parseOne("some_var=my\$key_$r", envMap: {'key_$r': 'val'});
       expect(out['some_var'], equals('myval'));
     });
   });

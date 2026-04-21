@@ -14,8 +14,8 @@ class Parser {
   /// Creates a [Map](dart:core).
   /// Duplicate keys are silently discarded.
   Map<String, String> parse(Iterable<String> lines) {
-    var envMap = <String, String>{};
-    for (var line in lines) {
+    final envMap = <String, String>{};
+    for (final line in lines) {
       final parsedKeyValue = parseOne(line, envMap: envMap);
       if (parsedKeyValue.isEmpty) continue;
       envMap.putIfAbsent(
@@ -40,7 +40,7 @@ class Parser {
         .trim();
     final quoteChar = getSurroundingQuoteCharacter(envValue);
     var envValueWithoutQuotes = removeSurroundingQuotes(envValue);
-    // Add any escapted quotes
+    // Add any escaped quotes
     if (quoteChar == _singleQuote) {
       envValueWithoutQuotes = envValueWithoutQuotes.replaceAll("\\'", "'");
       // Return. We don't expect any bash variables in single quoted strings

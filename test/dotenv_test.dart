@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('dotenv', () {
     setUp(() {
-      print(Directory.current.toString());
       dotenv.loadFromString(
           envString: File('test/.env')
               .readAsStringSync()); // mergeWith: Platform.environment
@@ -53,7 +52,6 @@ void main() {
 
   group('dotenv with overrides', () {
     setUp(() {
-      print(Directory.current.toString());
       dotenv.loadFromString(
         envString: File('test/.env').readAsStringSync(),
         overrideWith: [File("test/.env-override").readAsStringSync()],
@@ -88,19 +86,19 @@ void main() {
       expect(dotenv.env['OVERRIDE_VALUE'], 'overridden');
     });
     test(
-        'when getting a vairable that is not in .env, we should get the fallback we defined',
+        'when getting a variable that is not in .env, we should get the fallback we defined',
         () {
       expect(dotenv.get('FOO', fallback: 'bar'), 'foo');
       expect(dotenv.get('COMMENTS', fallback: 'sample'), 'sample');
       expect(dotenv.get('EQUAL_SIGNS', fallback: 'sample'), 'equals==');
     });
     test(
-        'when getting a vairable that is not in .env, we should get an error thrown',
+        'when getting a variable that is not in .env, we should get an error thrown',
         () {
       expect(() => dotenv.get('COMMENTS'), throwsAssertionError);
     });
     test(
-        'when getting a vairable using the nullable getter, we should get null if no fallback is defined',
+        'when getting a variable using the nullable getter, we should get null if no fallback is defined',
         () {
       expect(dotenv.maybeGet('COMMENTS'), null);
       expect(dotenv.maybeGet('COMMENTS', fallback: 'sample'), 'sample');

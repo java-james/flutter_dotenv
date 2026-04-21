@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
 
@@ -35,7 +34,7 @@ class DotEnv {
   bool _isInitialized = false;
   final Map<String, String> _envMap = {};
 
-  /// A copy of variables loaded at runtime from a file + any entries from mergeWith when loaded.
+  /// Variables loaded at runtime from a file + any entries from mergeWith when loaded.
   Map<String, String> get env {
     if (!_isInitialized) {
       throw NotInitializedError();
@@ -60,62 +59,42 @@ class DotEnv {
     return value;
   }
 
-  /// Load the enviroment variable value as an [int]
-  ///
-  /// If variable with [name] does not exist then [fallback] will be used.
-  /// However if also no [fallback] is supplied an error will occur.
-  ///
-  /// Furthermore an [FormatException] will be thrown if the variable with [name]
-  /// exists but can not be parsed as an [int].
-  int getInt(String name, {int? fallback}) {
+  /// Throws [AssertionError] if not found and no [fallback] given.
+  /// Throws [FormatException] if found but not parseable.
+  int getInt(String name, {int? fallback}) =>
+      _getTyped(name, fallback, int.parse);
+
+  /// Throws [AssertionError] if not found and no [fallback] given.
+  /// Throws [FormatException] if found but not parseable.
+  double getDouble(String name, {double? fallback}) =>
+      _getTyped(name, fallback, double.parse);
+
+  /// Accepts `true`/`1` and `false`/`0` (case-insensitive).
+  /// Throws [AssertionError] if not found and no [fallback] given.
+  /// Throws [FormatException] if found but not parseable.
+  bool getBool(String name, {bool? fallback}) =>
+      _getTyped(name, fallback, _parseBool);
+
+  T _getTyped<T>(String name, T? fallback, T Function(String) parse) {
     final value = maybeGet(name);
     if (value == null && fallback == null) {
       throw AssertionError(
           '$name variable not found. A non-null fallback is required for missing entries');
     }
-    return value != null ? int.parse(value) : fallback!;
+    return value != null ? parse(value) : fallback!;
   }
 
-  /// Load the enviroment variable value as a [double]
-  ///
-  /// If variable with [name] does not exist then [fallback] will be used.
-  /// However if also no [fallback] is supplied an error will occur.
-  ///
-  /// Furthermore an [FormatException] will be thrown if the variable with [name]
-  /// exists but can not be parsed as a [double].
-  double getDouble(String name, {double? fallback}) {
-    final value = maybeGet(name);
-    if (value == null && fallback == null) {
-      throw AssertionError(
-          '$name variable not found. A non-null fallback is required for missing entries');
-    }
-    return value != null ? double.parse(value) : fallback!;
-  }
-
-  /// Load the enviroment variable value as a [bool]
-  ///
-  /// If variable with [name] does not exist then [fallback] will be used.
-  /// However if also no [fallback] is supplied an error will occur.
-  ///
-  /// Furthermore an [FormatException] will be thrown if the variable with [name]
-  /// exists but can not be parsed as a [bool].
-  bool getBool(String name, {bool? fallback}) {
-    final value = maybeGet(name);
-    if (value == null && fallback == null) {
-      throw AssertionError(
-          '$name variable not found. A non-null fallback is required for missing entries');
-    }
-    if (value != null) {
-      if (['true', '1'].contains(value.toLowerCase())) {
+  static bool _parseBool(String value) {
+    switch (value.toLowerCase()) {
+      case 'true':
+      case '1':
         return true;
-      } else if (['false', '0'].contains(value.toLowerCase())) {
+      case 'false':
+      case '0':
         return false;
-      } else {
+      default:
         throw const FormatException('Could not parse as a bool');
-      }
     }
-
-    return fallback!;
   }
 
   String? maybeGet(String name, {String? fallback}) => env[name] ?? fallback;
@@ -159,15 +138,12 @@ class DotEnv {
       }
     }
 
-    final linesFromMergeWith = mergeWith.entries
-        .map((entry) => "${entry.key}=${entry.value}")
-        .toList();
-    final allLines = linesFromMergeWith
-      ..addAll(linesFromOverrides)
-      ..addAll(linesFromFile);
-    final envEntries = parser.parse(allLines);
-    _envMap.addAll(envEntries);
-    _isInitialized = true;
+    _mergeAndStore(
+      linesFromFile: linesFromFile,
+      linesFromOverrides: linesFromOverrides,
+      mergeWith: mergeWith,
+      parser: parser,
+    );
   }
 
   void loadFromString({
@@ -187,21 +163,28 @@ class DotEnv {
       throw EmptyEnvFileError();
     }
     final linesFromFile = envString.split('\n');
-    final linesFromOverrides = overrideWith
-        .map((String lines) => lines.split('\n'))
-        .expand((x) => x)
-        .toList();
-    final linesFromMergeWith = mergeWith.entries
-        .map((entry) => "${entry.key}=${entry.value}")
-        .toList();
+    final linesFromOverrides = overrideWith.expand((s) => s.split('\n')).toList();
 
-    final allLines = linesFromMergeWith
-      ..addAll(linesFromOverrides)
-      ..addAll(linesFromFile);
+    _mergeAndStore(
+      linesFromFile: linesFromFile,
+      linesFromOverrides: linesFromOverrides,
+      mergeWith: mergeWith,
+      parser: parser,
+    );
+  }
 
-    final envEntries = parser.parse(allLines);
-
-    _envMap.addAll(envEntries);
+  void _mergeAndStore({
+    required List<String> linesFromFile,
+    required List<String> linesFromOverrides,
+    required Map<String, String> mergeWith,
+    required Parser parser,
+  }) {
+    final allLines = [
+      ...mergeWith.entries.map((e) => '${e.key}=${e.value}'),
+      ...linesFromOverrides,
+      ...linesFromFile,
+    ];
+    _envMap.addAll(parser.parse(allLines));
     _isInitialized = true;
   }
 
@@ -213,7 +196,7 @@ class DotEnv {
   Future<List<String>> _getEntriesFromFile(String filename) async {
     try {
       WidgetsFlutterBinding.ensureInitialized();
-      var envString = await rootBundle.loadString(filename);
+      final envString = await rootBundle.loadString(filename);
       if (envString.isEmpty) {
         throw EmptyEnvFileError(filename: filename);
       }
