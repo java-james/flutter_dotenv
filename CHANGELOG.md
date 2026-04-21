@@ -14,7 +14,7 @@ Release notes are available on [github][notes].
 - Error messages now include the variable name for easier debugging
 - [fix] `load(isOptional: true)` no longer discards successfully loaded base file when an override file is missing or empty (fixes #70, #93, #101, #125)
 - [fix] `clean()` now resets `isInitialized` to `false`, so accessing `env` after `clean()` correctly throws `NotInitializedError`
-- [fix] Error classes (`NotInitializedError`, `FileNotFoundError`, `EmptyEnvFileError`) now include informative messages in `toString()` instead of the unhelpful `Instance of 'ClassName'` (fixes #40, #6, #72, #89, #59, #127)
+- [fix] Error classes (`NotInitializedError`, `FileNotFoundError`, `EmptyEnvFileError`) now include informative messages in `toString()` instead of the unhelpful `Instance of 'ClassName'` (fixes #72, #127; improves diagnostics for #59, #89)
 - `FileNotFoundError` and `EmptyEnvFileError` now carry the filename when available
 
 ### Note on error message improvements
