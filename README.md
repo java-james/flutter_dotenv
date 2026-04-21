@@ -45,16 +45,17 @@ After loading, access values anywhere you import the package:
 ```dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-String apiUrl = dotenv.get('API_URL');
-int retries = dotenv.getInt('MAX_RETRIES', fallback: 1);
-bool debug = dotenv.getBool('DEBUG', fallback: false);
+// Inside a function, widget, or service — not as a top-level initializer
+final apiUrl = dotenv.get('API_URL');
+final retries = dotenv.getInt('MAX_RETRIES', fallback: 1);
+final debug = dotenv.getBool('DEBUG', fallback: false);
 ```
 
 If your `.env` file is in a subdirectory (e.g. `assets/.env`), pass `fileName: 'assets/.env'` to `load()` and register the same path in `pubspec.yaml`.
 
 You do not need to call `WidgetsFlutterBinding.ensureInitialized()` — the library handles this internally when loading assets.
 
-> **Tip:** Add `.env` to your `.gitignore` if it contains values you don't want in version control.
+> **Tip:** Add `.env` and any environment-specific variants (e.g. `.env.staging`) to your `.gitignore` if they should not be committed.
 
 ## Security
 
@@ -121,8 +122,8 @@ await dotenv.load(
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `fileName` | `String` | `'.env'` | Asset path of the env file (must match `pubspec.yaml`). |
-| `overrideWithFiles` | `List<String>` | `[]` | Additional env asset files. |
-| `mergeWith` | `Map<String, String>` | `{}` | Key-value pairs to merge. |
+| `overrideWithFiles` | `List<String>` | `[]` | Additional env asset files that override the base file. |
+| `mergeWith` | `Map<String, String>` | `{}` | Programmatic key-value pairs (highest precedence). |
 | `isOptional` | `bool` | `false` | When `true`, missing or empty files don't throw. |
 | `parser` | `Parser` | `Parser()` | Custom parser instance. |
 
@@ -130,7 +131,7 @@ When `isOptional` is `true`, `FileNotFoundError` and `EmptyEnvFileError` are sup
 
 ### `loadFromString()`
 
-Load variables from a string — useful for tests or computed configuration:
+Load variables from a string — useful for tests or in-memory configuration:
 
 ```dart
 dotenv.loadFromString(envString: 'FOO=bar\nBAZ=qux');
@@ -139,8 +140,8 @@ dotenv.loadFromString(envString: 'FOO=bar\nBAZ=qux');
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `envString` | `String` | `''` | The env-formatted string to parse. |
-| `overrideWith` | `List<String>` | `[]` | Additional env strings whose values take precedence. |
-| `mergeWith` | `Map<String, String>` | `{}` | Key-value pairs to merge. |
+| `overrideWith` | `List<String>` | `[]` | Additional env strings that override the base string. |
+| `mergeWith` | `Map<String, String>` | `{}` | Programmatic key-value pairs (highest precedence). |
 | `isOptional` | `bool` | `false` | When `true`, an empty string doesn't throw. |
 | `parser` | `Parser` | `Parser()` | Custom parser instance. |
 
@@ -162,16 +163,16 @@ Both `load()` and `loadFromString()` call `clean()` first, replacing any previou
 
 | Member | Description |
 |--------|-------------|
-| `dotenv.isInitialized` | `true` after a successful `load()` or `loadFromString()`. |
+| `dotenv.isInitialized` | `true` after `load()` or `loadFromString()` completes. |
 | `dotenv.clean()` | Clears all loaded variables and resets `isInitialized` to `false`. |
 
-After calling `clean()`, all read methods (`env`, `get()`, `maybeGet()`, typed getters) will throw `NotInitializedError` until the next `load()` or `loadFromString()`.
+After `clean()`, the instance is uninitialized. Accessing values will throw `NotInitializedError` until the next `load()` or `loadFromString()`.
 
 ### Errors
 
 | Error | Thrown when |
 |-------|------------|
-| `NotInitializedError` | Accessing `dotenv.env` before loading. |
+| `NotInitializedError` | Accessing values before calling `load()` or `loadFromString()`. |
 | `FileNotFoundError` | The env file is not in the asset bundle (`load()` only). |
 | `EmptyEnvFileError` | The env file or string is empty. |
 | `AssertionError` | A required variable is missing and no fallback was provided. |
@@ -202,7 +203,7 @@ export EXPORTED=hello
 
 **Parsing rules:**
 - Lines without `=` are ignored.
-- `#` starts a comment unless inside quotes.
+- `#` starts a comment when it appears outside quoted values.
 - Double-quoted values expand `\n` to newlines and interpolate `$VAR` / `${VAR}`.
 - Single-quoted values do not interpolate variables. Escaped single quotes (`\'`) are unescaped.
 - Undefined variables interpolate to an empty string.
@@ -275,7 +276,8 @@ CLIENT_URL=https://$CLIENT_ID.dev.example.com
 |---------|-------|----------|
 | `FileNotFoundError` | The file isn't registered as an asset. | Add the exact path to `flutter: assets:` in `pubspec.yaml` and restart the app. |
 | `EmptyEnvFileError` | The env file or string has no content. | Add at least one `KEY=value` entry, or use `isOptional: true`. |
-| `NotInitializedError` | Accessing `dotenv.env` before loading. | Call `await dotenv.load()` in `main()` before `runApp()`. |
+| `NotInitializedError` | Accessing values before loading. | Call `await dotenv.load()` in `main()` before `runApp()`. |
+| `NotInitializedError` despite `load()` in `main()` | Values read in top-level initializers run before `main()`. | Move reads inside functions, widgets, or callbacks. |
 | `dotenv.env['NAME']` returns `null` | Key mismatch or the file wasn't loaded. | Check for typos. Verify `load()` completed successfully. |
 | `mergeWith` value not overridden by `.env` | `mergeWith` has highest precedence. | Move the value into an override file, or stop passing it via `mergeWith`. |
 | Web deploy: file not found | Web servers may ignore dotfiles. | Rename the file (e.g. `env` or `config.env`) and update `fileName` and `pubspec.yaml`. |
