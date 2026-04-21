@@ -177,6 +177,31 @@ void main() {
     });
   });
 
+  group('isEveryDefined', () {
+    test('returns true when all variables exist with non-empty values', () {
+      dotenv.loadFromString(envString: 'A=1\nB=2\nC=3');
+      expect(dotenv.isEveryDefined(['A', 'B', 'C']), isTrue);
+    });
+
+    test('returns false when a variable is missing', () {
+      dotenv.loadFromString(envString: 'A=1\nB=2');
+      expect(dotenv.isEveryDefined(['A', 'B', 'MISSING']), isFalse);
+    });
+
+    test('returns false when a variable has an empty value', () {
+      dotenv.loadFromString(envString: 'A=1\nB=');
+      expect(dotenv.isEveryDefined(['A', 'B']), isFalse);
+    });
+
+    test('throws NotInitializedError before initialization', () {
+      final fresh = DotEnv();
+      expect(
+        () => fresh.isEveryDefined(['A']),
+        throwsA(isA<NotInitializedError>()),
+      );
+    });
+  });
+
   group('isOptional override loading', () {
     test(
         'loadFromString with valid base and empty override preserves base vars',

@@ -205,11 +205,10 @@ class DotEnv {
     _isInitialized = true;
   }
 
-  /// True if all supplied variables have nonempty value; false otherwise.
-  /// Differs from [containsKey](dart:core) by excluding null values.
-  /// Note [load] should be called first.
+  /// Returns true if all supplied variables have non-empty values.
+  /// Throws [NotInitializedError] if called before [load] or [loadFromString].
   bool isEveryDefined(Iterable<String> vars) =>
-      vars.every((k) => _envMap[k]?.isNotEmpty ?? false);
+      vars.every((k) => env[k]?.isNotEmpty ?? false);
 
   Future<List<String>> _getEntriesFromFile(String filename) async {
     try {

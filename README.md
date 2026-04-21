@@ -204,8 +204,9 @@ export EXPORTED=hello
 **Parsing rules:**
 - Lines without `=` are ignored.
 - `#` starts a comment when it appears outside quoted values.
-- Double-quoted values expand `\n` to newlines and interpolate `$VAR` / `${VAR}`.
+- Double-quoted values unescape `\"` and expand `\n` to newlines, and interpolate `$VAR` / `${VAR}`.
 - Single-quoted values do not interpolate variables. Escaped single quotes (`\'`) are unescaped.
+- Use `\$` for a literal dollar sign in unquoted or double-quoted values.
 - Undefined variables interpolate to an empty string.
 - Unquoted values are trimmed of surrounding whitespace.
 - If the same key appears multiple times anywhere in the processed input, the first occurrence wins (see [value precedence](#value-precedence)).

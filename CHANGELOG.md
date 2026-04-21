@@ -10,6 +10,7 @@ Release notes are available on [github][notes].
 
 # 6.0.1
 
+- [fix] `isEveryDefined()` now throws `NotInitializedError` before `load()`, consistent with all other read APIs
 - [fix] Replace `assert()` with explicit `if`/`throw` in `getInt()`, `getDouble()`, and `getBool()` so null-safety checks are enforced in release builds
 - Error messages now include the variable name for easier debugging
 - [fix] `load(isOptional: true)` no longer discards successfully loaded base file when an override file is missing or empty (fixes #70, #93, #101, #125)
