@@ -237,6 +237,17 @@ dotenv.get('LOG_LEVEL'); // => "debug"
 
 Override files take precedence over the base file. Register all env files as assets in `pubspec.yaml`.
 
+## Remote configuration
+
+If you want to manage environment configs remotely and load them by config ID at runtime, see the companion package [flutter_dotenv_remote](https://pub.dev/packages/flutter_dotenv_remote). It also supports using the last successful config as a local fallback.
+
+```dart
+await dotenv.loadRemote(
+  configId: 'your-config-id',
+  useCacheOnFailure: true,
+);
+```
+
 ## Multiple instances
 
 The package exports a pre-created singleton `dotenv` for the common case. You can also create separate instances for different configurations — each instance maintains its own independent state:
