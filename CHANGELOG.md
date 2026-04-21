@@ -10,7 +10,7 @@ Release notes are available on [github][notes].
 
 # 6.0.1
 
-- [fix] Replace `assert()` with explicit `if`/`throw` in `getInt()`, `getDouble()`, and `getBool()` so null-safety checks are enforced in release builds (fixes #136)
+- [fix] Replace `assert()` with explicit `if`/`throw` in `getInt()`, `getDouble()`, and `getBool()` so null-safety checks are enforced in release builds
 - Error messages now include the variable name for easier debugging
 
 ### Note on release-build behavior change
