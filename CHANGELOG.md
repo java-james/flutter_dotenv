@@ -8,9 +8,10 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
-# HEAD
+# 6.0.2
 
 - [docs] Document the temporary workaround for Flutter 3.50.0 Android asset packaging and link the upstream fix (#145)
+- [refactor] Share environment merging and typed-value parsing logic
 
 # 6.0.1
 
