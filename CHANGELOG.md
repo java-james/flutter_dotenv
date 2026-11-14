@@ -8,6 +8,10 @@ Release notes are available on [github][notes].
 [pub-semver-readme]: https://pub.dartlang.org/packages/pub_semver
 [notes]: https://github.com/java-james/flutter_dotenv/releases
 
+# HEAD
+
+- [docs] Document the temporary workaround for Flutter 3.50.0 Android asset packaging and link the upstream fix (#145)
+
 # 6.0.1
 
 - [fix] `isEveryDefined()` now throws `NotInitializedError` before `load()`, consistent with all other read APIs

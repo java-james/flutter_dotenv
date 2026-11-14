@@ -13,6 +13,8 @@ flutter pub add flutter_dotenv
 
 ## Quick start
 
+> **Flutter 3.50.0 on Android:** This release has an [asset packaging regression](https://github.com/flutter/flutter/issues/196444) affecting `.env` files. See the [temporary workaround](#android-flutter-3500) until patched.
+
 **1. Create a `.env` file** in your project root:
 
 ```sh
@@ -286,7 +288,7 @@ CLIENT_URL=https://$CLIENT_ID.dev.example.com
 
 | Problem | Cause | Solution |
 |---------|-------|----------|
-| `FileNotFoundError` | The file isn't registered as an asset. | Add the exact path to `flutter: assets:` in `pubspec.yaml` and restart the app. |
+| `FileNotFoundError` | The file is missing from the asset bundle. | Check the exact path in `pubspec.yaml` and `fileName`, then rebuild. For Flutter 3.50.0 on Android, see the [temporary workaround](#android-flutter-3500). |
 | `EmptyEnvFileError` | The env file or string has no content. | Add at least one `KEY=value` entry, or use `isOptional: true`. |
 | `NotInitializedError` | Accessing values before loading. | Call `await dotenv.load()` in `main()` before `runApp()`. |
 | `NotInitializedError` despite `load()` in `main()` | Values read in top-level initializers run before `main()`. | Move reads inside functions, widgets, or callbacks. |
@@ -294,6 +296,24 @@ CLIENT_URL=https://$CLIENT_ID.dev.example.com
 | `mergeWith` value not overridden by `.env` | `mergeWith` has highest precedence. | Move the value into an override file, or stop passing it via `mergeWith`. |
 | Web deploy: file not found | Web servers may ignore dotfiles. | Rename the file (e.g. `env` or `config.env`) and update `fileName` and `pubspec.yaml`. |
 | `FormatException` on typed getter | The value can't be parsed as the requested type. | Check the raw value with `dotenv.env['NAME']`. |
+
+### Android: Flutter 3.50.0
+
+Flutter 3.50.0 has an Android packaging regression that can omit `.env` files and assets under `_`-prefixed directories, even when registered in `pubspec.yaml`. Check [Flutter issue #196444](https://github.com/flutter/flutter/issues/196444) for the patched release ([proposed fix](https://github.com/flutter/flutter/pull/196465)).
+
+Until your Flutter SDK includes the fix, rename `.env` to `config.env` and update both paths:
+
+```yaml
+flutter:
+  assets:
+    - config.env
+```
+
+```dart
+await dotenv.load(fileName: 'config.env');
+```
+
+Rename any override files too (e.g. `.env.staging` to `config.staging.env`) and update `overrideWithFiles`, their asset entries, and any `.gitignore` or CI references. Rebuild the app after renaming. Moving `.env` into a subdirectory alone does not help.
 
 ## Migration from older versions
 
